@@ -1,24 +1,83 @@
-from flask import Flask, send_from_directory, abort
-import os, json
+from flask import Flask, request, abort, render_template_string
+import os
+from urllib.parse import quote, unquote
 
 app = Flask(__name__)
 MEDIA_DIR = "/media"
 
-@app.route("/")
-def list_files():
-    files = []
-    for root, dirs, filenames in os.walk(MEDIA_DIR):
-        for name in filenames:
-            rel_path = os.path.relpath(os.path.join(root, name), MEDIA_DIR)
-            files.append(rel_path)
-    return "<h1>Media-Dateien</h1><ul>" + "".join([f"<li><a href='/file/{f}'>{f}</a></li>" for f in files]) + "</ul>"
+# HTML Template für Verzeichnisse
+DIR_TEMPLATE = """
+<!doctype html>
+<title>Media Browser</title>
+<h1>Verzeichnis: {{ current_path }}</h1>
+{% if parent_path %}
+<a href="{{ parent_path }}">⬅ Zurück</a><br><br>
+{% endif %}
+<ul>
+{% for name, is_dir, url in entries %}
+    <li>
+    {% if is_dir %}
+        📁 <a href="{{ url }}">{{ name }}</a>
+    {% else %}
+        📄 <a href="{{ url }}">{{ name }}</a>
+    {% endif %}
+    </li>
+{% endfor %}
+</ul>
+<style>
+body { font-family: Arial, sans-serif; }
+ul { list-style-type: none; padding-left: 0; }
+li { margin: 3px 0; }
+</style>
+"""
 
-@app.route("/file/<path:filename>")
-def serve_file(filename):
-    try:
-        return send_from_directory(MEDIA_DIR, filename, as_attachment=False)
-    except FileNotFoundError:
+# HTML Template für Datei
+FILE_TEMPLATE = """
+<!doctype html>
+<title>{{ filename }}</title>
+<h1>Datei: {{ filename }}</h1>
+<a href="{{ parent_path }}">⬅ Zurück</a><br><br>
+<pre>{{ content }}</pre>
+<style>
+body { font-family: monospace; white-space: pre-wrap; }
+pre { background-color: #f0f0f0; padding: 10px; border-radius: 5px; }
+</style>
+"""
+
+def get_parent(path):
+    if path == "":
+        return None
+    return "/" + "/".join(path.strip("/").split("/")[:-1])
+
+@app.route("/", defaults={"req_path": ""})
+@app.route("/<path:req_path>")
+def serve(req_path):
+    req_path = unquote(req_path)  # URL-dekodieren
+    abs_path = os.path.join(MEDIA_DIR, req_path)
+
+    if not os.path.exists(abs_path):
         abort(404)
+
+    if os.path.isdir(abs_path):
+        entries = []
+        for name in sorted(os.listdir(abs_path)):
+            entry_path = os.path.join(req_path, name).replace("\\", "/")
+            url = "/" + quote(entry_path)
+            entries.append((name, os.path.isdir(os.path.join(abs_path, name)), url))
+        parent_path = get_parent(req_path)
+        if parent_path is not None:
+            parent_path = "/" + parent_path.strip("/")
+        return render_template_string(DIR_TEMPLATE, current_path="/" + req_path.strip("/"), entries=entries, parent_path=parent_path)
+    else:
+        try:
+            with open(abs_path, "r", encoding="utf-8") as f:
+                content = f.read()
+        except:
+            content = "Kann Datei nicht lesen (Binär oder Berechtigung)"
+        parent_path = get_parent(req_path)
+        if parent_path is not None:
+            parent_path = "/" + parent_path.strip("/")
+        return render_template_string(FILE_TEMPLATE, filename=req_path, content=content, parent_path=parent_path)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8090)
