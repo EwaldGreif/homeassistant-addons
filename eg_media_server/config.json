@@ -13,6 +13,5 @@
   "schema": {},
   "map": [
     "media:ro"
-  ],
-  "webui": "http://[HOST]:[PORT]/"
+  ]
 }
