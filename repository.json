@@ -2,12 +2,10 @@
   "name": "Meine Home Assistant Add-ons",
   "url": "https://github.com/EwaldGreif/homeassistant-addons",
   "maintainer": "<Ewald Greif> <ewald.greif@t-online.de>",
+  "version": "1.0.1",
   "addons": [
     {
-      "name": "EG Media Server",
-      "slug": "eg_media_server",
-      "description": "Ein minimaler Test-Media-Server für Home Assistant",
-      "url": "https://github.com/EwaldGreif/homeassistant-addons/tree/main/eg_media_server"
+      "eg_media_server"
     }
   ]
 }
