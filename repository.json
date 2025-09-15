@@ -4,8 +4,6 @@
   "maintainer": "<Ewald Greif> <ewald.greif@t-online.de>",
   "version": "1.0.1",
   "addons": [
-    {
-      "eg_media_server"
-    }
+     "eg_media_server"
   ]
 }
