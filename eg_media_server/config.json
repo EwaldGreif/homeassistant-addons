@@ -1,17 +1,16 @@
 {
   "name": "EG Media Server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "slug": "eg_media_server",
   "description": "Ein minimaler Media Server als Beispiel-Add-on",
   "arch": ["amd64", "armv7", "armhf", "aarch64"],
   "startup": "services",
   "boot": "auto",
-  "options": {
-    "port": 8000
+  "ports": {
+    "8090/tcp": 8090
   },
-  "schema": {
-    "port": "int"
-  },
+  "options": {},
+  "schema": {},
   "map": [
     "media:ro"
   ]
