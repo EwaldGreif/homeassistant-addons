@@ -2,10 +2,10 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>{{ file.split('/')[-1] }}</title>
+  <title>{{ Video file.split('/')[-1] }}</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin: 20px; }
-    video, audio { max-width: 90%; margin: 20px auto; display: block; }
+    video { max-width: 90%; margin: 20px auto; display: block; }
   </style>
 </head>
 <body>
@@ -16,11 +16,6 @@
       <source src="{{ file }}" type="{{ mime }}">
       Ihr Browser unterstützt dieses Video nicht.
     </video>
-  {% elif mime.startswith('audio/') %}
-    <audio controls autoplay muted>
-      <source src="{{ file }}" type="{{ mime }}">
-      Ihr Browser unterstützt dieses Audio nicht.
-    </audio>
   {% endif %}
 </body>
 </html>

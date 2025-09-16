@@ -56,7 +56,7 @@ def serve(req_path):
         mime_type, _ = mimetypes.guess_type(abs_path)
         return send_file(abs_path, mimetype=mime_type)
 
-@app.route("/play")
+@app.route("/video")
 def play():
     file_path = request.args.get("file")
     abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
@@ -66,11 +66,25 @@ def play():
     mime_type, _ = mimetypes.guess_type(file_path)
     mime_type = mime_type or 'application/octet-stream'
     
-    # Nur Video/Audio anzeigen, sonst als Download
-    if mime_type.startswith(('video/','audio/')):
-        return render_template("player.html", file=file_path, mime=mime_type)
+    if mime_type.startswith(('video/')):
+        return render_template("video.html", file=file_path, mime=mime_type)
     else:
-        return send_file(abs_path, as_attachment=True)
+        abort(404, "Keine Video-Datei")
+
+@app.route("/audio")
+def play():
+    file_path = request.args.get("file")
+    abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
+    if not abs_path or not os.path.isfile(abs_path):
+        abort(404, "Datei nicht gefunden")
+
+    mime_type, _ = mimetypes.guess_type(file_path)
+    mime_type = mime_type or 'application/octet-stream'
+    
+    if mime_type.startswith(('audio/')):
+        return render_template("audio.html", file=file_path, mime=mime_type)
+    else:
+        abort(404, "Keine Audio-Datei")
 
 @app.route("/slideshow")
 def slideshow():

@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Diashow</title>
+  <title>Diashow {{ dir }}</title>
   <style>
     body { font-family: sans-serif; text-align: center; }
     img { max-width: 90%; max-height: 80vh; margin: 20px auto; display: block; }
@@ -31,7 +31,7 @@
     function showImage(index) {
       current = (index + slides.length) % slides.length;
       const title = document.getElementById("title");
-      title.textContent = `${current} von ${slides.length} &nbsp;&nbsp;&nbsp; ${slides[current].split('/').pop()}`;
+      title.textContent = `${current} von ${slides.length} - ${slides[current].split('/').pop()}`;
       img.src = slides[current];
     }
 
