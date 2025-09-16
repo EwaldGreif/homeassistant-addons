@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Verzeichnis: {{ dir }}</title>
+</head>
+<body>
+  <h1>📂 Verzeichnis {{ dir }}</h1>
+
+  {% if parent_dir %}
+    <p>⬅️ <a href="{{ parent_dir }}">Eine Ebene zurück</a></p>
+  {% endif %}
+
+  <ul>
+    {% for name, type, url in entries %}
+      {% if type == "folder" %}
+        <li>📁 <a href="{{ url }}">{{ name }}</a></li>
+      {% elif type == "video" %}
+        <li>🎬 <a href="/play?file={{ url }}">{{ name }}</a></li>
+      {% elif type == "audio" %}
+        <li>🎵 <a href="/play?file={{ url }}">{{ name }}</a></li>
+      {% elif type == "image" %}
+        <li>🖼️ <a href="{{ url }}">{{ name }}</a></li>
+      {% else %}
+        <li>📄 <a href="{{ url }}">{{ name }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</body>
+</html>

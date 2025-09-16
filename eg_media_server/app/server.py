@@ -1,6 +1,6 @@
 import os
 import mimetypes
-from flask import Flask, request, abort, render_template_string, send_file
+from flask import Flask, request, abort, render_template, send_file
 from urllib.parse import quote, unquote
 
 app = Flask(__name__)
@@ -88,7 +88,7 @@ def serve(req_path):
         parent_path = get_parent(req_path)
         if parent_path is not None:
             parent_path = "/" + parent_path.strip("/")
-        return render_template_string(DIR_TEMPLATE, current_path="/" + req_path.strip("/"), entries=entries, parent_path=parent_path)
+        return render_template("folder.html", dir="/" + req_path.strip("/"), entries=entries, parent_dir=parent_path)
     else:
         if not abs_path or not os.path.isfile(abs_path):
             abort(404, "Datei nicht gefunden")
@@ -96,18 +96,20 @@ def serve(req_path):
         mime_type, _ = mimetypes.guess_type(abs_path)
         return send_file(abs_path, mimetype=mime_type)
 
-        # Sonst als Download
-        #return send_file(file_path, as_attachment=True)
-        
-        #try:
-        #    with open(abs_path, "r", encoding="utf-8") as f:
-        #        content = f.read()
-        #except:
-        #    content = "Kann Datei nicht lesen (Binär oder Berechtigung)"
-        #parent_path = get_parent(req_path)
-        #if parent_path is not None:
-        #    parent_path = "/" + parent_path.strip("/")
-        #return render_template_string(FILE_TEMPLATE, filename=req_path, content=content, parent_path=parent_path)
+@app.route("/play")
+def play():
+    file_path = request.args.get("file")
+    if not file_path or not os.path.isfile(file_path):
+        abort(404, "Datei nicht gefunden")
+
+    mime_type, _ = mimetypes.guess_type(file_path)
+    mime_type = mime_type or 'application/octet-stream'
+    
+    # Nur Video/Audio anzeigen, sonst als Download
+    if mime_type.startswith(('video/','audio/')):
+        return render_template("player.html", file=file_path, mime=mime_type)
+    else:
+        return send_file(file_path, as_attachment=True)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8090)

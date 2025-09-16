@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ file.split('/')[-1] }}</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin: 20px; }
+    video, audio { max-width: 90%; margin: 20px auto; display: block; }
+  </style>
+</head>
+<body>
+  <h1>{{ file.split('/')[-1] }}</h1>
+
+  {% if mime.startswith('video/') %}
+    <video controls autoplay>
+      <source src="{{ file }}" type="{{ mime }}">
+      Ihr Browser unterstützt dieses Video nicht.
+    </video>
+  {% elif mime.startswith('audio/') %}
+    <audio controls autoplay>
+      <source src="{{ file }}" type="{{ mime }}">
+      Ihr Browser unterstützt dieses Audio nicht.
+    </audio>
+  {% endif %}
+
+  <p><button onclick="history.back()">⬅ Zurück zur Galerie</button></p>
+</body>
+</html>
