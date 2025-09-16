@@ -57,7 +57,7 @@ def serve(req_path):
         return send_file(abs_path, mimetype=mime_type)
 
 @app.route("/video")
-def play():
+def video():
     file_path = request.args.get("file")
     abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
     if not abs_path or not os.path.isfile(abs_path):
@@ -72,7 +72,7 @@ def play():
         abort(404, "Keine Video-Datei")
 
 @app.route("/audio")
-def play():
+def audio():
     file_path = request.args.get("file")
     abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
     if not abs_path or not os.path.isfile(abs_path):
