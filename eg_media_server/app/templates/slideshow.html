@@ -9,13 +9,13 @@
   </style>
 </head>
 <body>
-  <h1>🖼️ Diashow {{ dir }}</h1>
+  <h1>🖼️ {{ dir }}</h1>
   <h2 id="title"></h2>
   <div>
     <button onclick="window.location.href='{{ dir }}'">⬅ Zurück zum Verzeichnis</button>
     <button onclick="prevImage()">⏮ Zurück</button>
     <button onclick="nextImage()">⏭ Weiter</button>
-    <button id="autoplay" onclick="toggleAutoplay()">⏯ Autoplay</button>
+    <button id="autoplay" onclick="toggleAutoplay()">▶️ Start Diashow</button>
   </div>
 
   <img id="slideshow" src="{{ images[0] }}" alt="Slideshow Bild">
@@ -31,7 +31,7 @@
     function showImage(index) {
       current = (index + slides.length) % slides.length;
       const title = document.getElementById("title");
-      title.textContent = '$current/$slides.length slides[current]';
+      title.textContent = '${current}/${slides.length} ${slides[current]}';
       img.src = slides[current];
     }
 
@@ -51,7 +51,7 @@
         autoplay = null;
       } else {
         autoplay = setInterval(nextImage, interval);
-        btn.innerText = "◼️ Stop Autoplay"
+        btn.innerText = "◼️ Stop Diashow"
       }
     }
   </script>
