@@ -10,7 +10,7 @@
 </head>
 <body>
   <h1>🖼️ {{ dir }}</h1>
-  <h2 id="title"></h2>
+  <h3 id="title"></h3>
   <div>
     <button onclick="window.location.href='{{ dir }}'">⬅ Zurück zum Verzeichnis</button>
     <button onclick="prevImage()">⏮ Zurück</button>
@@ -31,7 +31,7 @@
     function showImage(index) {
       current = (index + slides.length) % slides.length;
       const title = document.getElementById("title");
-      title.textContent = `${current}/${slides.length} ${slides[current]}`;
+      title.textContent = `${current} von ${slides.length} &nbsp;&nbsp;&nbsp; ${slides[current].split('/').pop()}`;
       img.src = slides[current];
     }
 
