@@ -56,7 +56,7 @@ def play():
     file_path = request.args.get("file")
     abs_path = os.path.join(MEDIA_DIR, file_path)
     if not abs_path or not os.path.isfile(abs_path):
-        abort(404, "Datei nicht gefunden")
+        abort(404, "Datei nicht gefunden" + '#' + abs_path)
 
     mime_type, _ = mimetypes.guess_type(file_path)
     mime_type = mime_type or 'application/octet-stream'
