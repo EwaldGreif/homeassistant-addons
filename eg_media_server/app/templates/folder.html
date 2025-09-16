@@ -16,10 +16,10 @@
   <h1>📂 Verzeichnis {{ dir }}</h1>
 
   {% if parent_dir %}
-    <p>⬅️ <a href="{{ parent_dir }}">Eine Ebene zurück</a></p>
+    <p>⬅️ <a href="{{ parent_dir }}">Eine Ebene zurück</a>
     {% if images > 1 %}
-      <p>▶️ <a href="/slideshow?dir={{ dir }}">Diashow starten</a></p>
-    {% endif %}
+      &nbsp;&nbsp;&nbsp;▶️ <a href="/slideshow?dir={{ dir }}">Diashow starten</a>
+    {% endif %}</p>
   {% endif %}
 
   <ul>
