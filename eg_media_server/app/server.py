@@ -4,8 +4,9 @@ from urllib.parse import quote, unquote
 
 app = Flask(__name__)
 MEDIA_DIR = "/media"
-VIDEO_EXTENSIONS = ('.mp4', '.webm', '.mov', '.avi')
-AUDIO_EXTENSIONS = ('.mp3', '.wav', '.ogg', '.flac')
+VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi')
+AUDIO_EXTENSIONS = ('.mp3', '.ogg', '.flac')
+IMAGE_EXTENSIONS = ('.jpeg', '.jpg', '.png')
 
 # HTML Template für Verzeichnisse
 DIR_TEMPLATE = """
@@ -24,6 +25,8 @@ DIR_TEMPLATE = """
         🎬 <a href="{{ url }}">{{ name }}</a>
     {% elif type == "audio" %}
         🎵 <a href="{{ url }}">{{ name }}</a>
+    {% elif type == "image" %}
+        🖼️ <a href="{{ url }}">{{ name }}</a>
     {% else %}
         📄 <a href="{{ url }}">{{ name }}</a>
     {% endif %}
@@ -78,6 +81,8 @@ def serve(req_path):
                     entry_type = "video"
                 elif ext.endswith(AUDIO_EXTENSIONS):
                     entry_type = "audio"
+                elif ext.endswith(IMAGE_EXTENSIONS):
+                    entry_type = "image"
             entries.append((name, entry_type, url))
         parent_path = get_parent(req_path)
         if parent_path is not None:
