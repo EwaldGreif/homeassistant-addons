@@ -9,51 +9,6 @@ VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi')
 AUDIO_EXTENSIONS = ('.mp3', '.ogg', '.flac')
 IMAGE_EXTENSIONS = ('.jpeg', '.jpg', '.png')
 
-# HTML Template für Verzeichnisse
-DIR_TEMPLATE = """
-<!doctype html>
-<title>Media Browser</title>
-<h1>Verzeichnis: {{ current_path }}</h1>
-{% if parent_path %}
-<a href="{{ parent_path }}">⬅ Zurück</a><br><br>
-{% endif %}
-<ul>
-{% for name, type, url in entries %}
-    <li>
-    {% if type == "folder" %}
-        📁 <a href="{{ url }}">{{ name }}</a>
-    {% elif type == "video" %}
-        🎬 <a href="{{ url }}">{{ name }}</a>
-    {% elif type == "audio" %}
-        🎵 <a href="{{ url }}">{{ name }}</a>
-    {% elif type == "image" %}
-        🖼️ <a href="{{ url }}">{{ name }}</a>
-    {% else %}
-        📄 <a href="{{ url }}">{{ name }}</a>
-    {% endif %}
-    </li>
-{% endfor %}
-</ul>
-<style>
-body { font-family: Arial, sans-serif; }
-ul { list-style-type: none; padding-left: 0; }
-li { margin: 3px 0; }
-</style>
-"""
-
-# HTML Template für Datei
-FILE_TEMPLATE = """
-<!doctype html>
-<title>{{ filename }}</title>
-<h1>Datei: {{ filename }}</h1>
-<a href="{{ parent_path }}">⬅ Zurück</a><br><br>
-<pre>{{ content }}</pre>
-<style>
-body { font-family: monospace; white-space: pre-wrap; }
-pre { background-color: #f0f0f0; padding: 10px; border-radius: 5px; }
-</style>
-"""
-
 def get_parent(path):
     if path == "":
         return None
@@ -99,7 +54,8 @@ def serve(req_path):
 @app.route("/play")
 def play():
     file_path = request.args.get("file")
-    if not file_path or not os.path.isfile(file_path):
+    abs_path = os.path.join(MEDIA_DIR, file_path)
+    if not abs_path or not os.path.isfile(abs_path):
         abort(404, "Datei nicht gefunden")
 
     mime_type, _ = mimetypes.guess_type(file_path)
@@ -109,7 +65,7 @@ def play():
     if mime_type.startswith(('video/','audio/')):
         return render_template("player.html", file=file_path, mime=mime_type)
     else:
-        return send_file(file_path, as_attachment=True)
+        return send_file(abs_path, as_attachment=True)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8090)
