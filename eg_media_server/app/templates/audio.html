@@ -2,14 +2,14 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>{{ Audio file.split('/')[-1] }}</title>
+  <title>Audio {{ file.split('/')[-1] }}</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin: 20px; }
     audio { max-width: 90%; margin: 20px auto; display: block; }
   </style>
 </head>
 <body>
-  <h1>{{ file }}</h1>
+  <h1>🎵 {{ file }}</h1>
   <p><button onclick="history.back()">⬅ Zurück zum Verzeichnis</button></p>
   {% if mime.startswith('audio/') %}
     <audio controls autoplay muted>
