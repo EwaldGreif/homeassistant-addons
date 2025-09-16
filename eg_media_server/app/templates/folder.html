@@ -17,9 +17,9 @@
 
   {% if parent_dir %}
     <p>⬅️ <a href="{{ parent_dir }}">Eine Ebene zurück</a></p>
-  {% endif %}
-  {% if images > 1 %}
-    <p>▶️ <a href="/slideshow?dir={{ dir }}">Diashow starten</a></p>
+    {% if images > 1 %}
+      <p>▶️ <a href="/slideshow?dir={{ dir }}">Diashow starten</a></p>
+    {% endif %}
   {% endif %}
 
   <ul>

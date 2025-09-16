@@ -22,6 +22,7 @@
   </div>
 
   <script>
+    const slides = JSON.parse('{{ images|tojson|safe }}');
     let current = 0;
     let autoplay = null;
     let interval = 3000; // Geschwindigkeit in ms (konfigurierbar)
@@ -29,8 +30,8 @@
     const img = document.getElementById("slideshow");
 
     function showImage(index) {
-      current = (index + images.length) % images.length;
-      img.src = images[current];
+      current = (index + slides.length) % slides.length;
+      img.src = slides[current];
     }
 
     function nextImage() {
