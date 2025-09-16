@@ -3,12 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Verzeichnis: {{ dir }}</title>
+  <style>
+    body { font-family: sans-serif; }
+    a:focus {
+        outline: 3px solid orange;
+        background-color: #222;
+        color: #fff;
+    }  
+  </style>
 </head>
 <body>
   <h1>📂 Verzeichnis {{ dir }}</h1>
 
   {% if parent_dir %}
     <p>⬅️ <a href="{{ parent_dir }}">Eine Ebene zurück</a></p>
+  {% endif %}
+  {% if images > 1 %}
+    <p>▶️ <a href="/slideshow?dir={{ dir }}">Diashow starten</a></p>
   {% endif %}
 
   <ul>

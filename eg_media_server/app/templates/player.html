@@ -9,8 +9,8 @@
   </style>
 </head>
 <body>
-  <h1>{{ file.split('/')[-1] }}</h1>
-
+  <h1>{{ file }}</h1>
+  <p><button onclick="history.back()">⬅ Zurück zum Verzeichnis</button></p>
   {% if mime.startswith('video/') %}
     <video controls autoplay>
       <source src="{{ file }}" type="{{ mime }}">
@@ -22,7 +22,5 @@
       Ihr Browser unterstützt dieses Audio nicht.
     </audio>
   {% endif %}
-
-  <p><button onclick="history.back()">⬅ Zurück zur Galerie</button></p>
 </body>
 </html>

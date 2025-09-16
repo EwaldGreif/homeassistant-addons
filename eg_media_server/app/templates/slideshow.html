@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Diashow</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    img { max-width: 90%; max-height: 80vh; margin: 20px auto; display: block; }
+    button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🖼️ Diashow {{ dir }}</h1>
+  <p>⬅️ <a href="{{ dir }}">Zurück zum Verzeichnis</a></p>
+
+  <img id="slideshow" src="{{ images[0] }}" alt="Slideshow Bild">
+
+  <div>
+    <button onclick="prevImage()">⏮ Zurück</button>
+    <button onclick="nextImage()">⏭ Weiter</button>
+    <button onclick="toggleAutoplay()">⏯ Autoplay</button>
+  </div>
+
+  <script>
+    let current = 0;
+    let autoplay = null;
+    let interval = 3000; // Geschwindigkeit in ms (konfigurierbar)
+
+    const img = document.getElementById("slideshow");
+
+    function showImage(index) {
+      current = (index + images.length) % images.length;
+      img.src = images[current];
+    }
+
+    function nextImage() {
+      showImage(current + 1);
+    }
+
+    function prevImage() {
+      showImage(current - 1);
+    }
+
+    function toggleAutoplay() {
+      if (autoplay) {
+        clearInterval(autoplay);
+        autoplay = null;
+      } else {
+        autoplay = setInterval(nextImage, interval);
+      }
+    }
+  </script>
+</body>
+</html>
