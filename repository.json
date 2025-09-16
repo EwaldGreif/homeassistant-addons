@@ -2,7 +2,7 @@
   "name": "Meine Home Assistant Add-ons",
   "url": "https://github.com/EwaldGreif/homeassistant-addons",
   "maintainer": "<Ewald Greif> <ewald.greif@t-online.de>",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "addons": [
      "eg_media_server"
   ]
