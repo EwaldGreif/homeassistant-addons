@@ -31,7 +31,7 @@
     function showImage(index) {
       current = (index + slides.length) % slides.length;
       const title = document.getElementById("title");
-      title.textContent = '${current}/${slides.length} ${slides[current]}';
+      title.textContent = `${current}/${slides.length} ${slides[current]}`;
       img.src = slides[current];
     }
 
@@ -47,7 +47,7 @@
       const btn = document.getElementById("autoplay");
       if (autoplay) {
         clearInterval(autoplay);
-        btn.innerText = "⏯ Autoplay"
+        btn.innerText = "▶️ Start Diashow"
         autoplay = null;
       } else {
         autoplay = setInterval(nextImage, interval);
