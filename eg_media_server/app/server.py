@@ -4,6 +4,8 @@ from urllib.parse import quote, unquote
 
 app = Flask(__name__)
 MEDIA_DIR = "/media"
+VIDEO_EXTENSIONS = ('.mp4', '.webm', '.mov', '.avi')
+AUDIO_EXTENSIONS = ('.mp3', '.wav', '.ogg', '.flac')
 
 # HTML Template für Verzeichnisse
 DIR_TEMPLATE = """
@@ -14,10 +16,14 @@ DIR_TEMPLATE = """
 <a href="{{ parent_path }}">⬅ Zurück</a><br><br>
 {% endif %}
 <ul>
-{% for name, is_dir, url in entries %}
+{% for name, type, url in entries %}
     <li>
-    {% if is_dir %}
+    {% if type == "folder" %}
         📁 <a href="{{ url }}">{{ name }}</a>
+    {% elif type == "video" %}
+        🎬 <a href="{{ url }}">{{ name }}</a>
+    {% elif type == "audio" %}
+        🎵 <a href="{{ url }}">{{ name }}</a>
     {% else %}
         📄 <a href="{{ url }}">{{ name }}</a>
     {% endif %}
@@ -63,7 +69,16 @@ def serve(req_path):
         for name in sorted(os.listdir(abs_path)):
             entry_path = os.path.join(req_path, name).replace("\\", "/")
             url = "/" + quote(entry_path)
-            entries.append((name, os.path.isdir(os.path.join(abs_path, name)), url))
+            entry_type = "file"
+            if os.path.isdir(os.path.join(abs_path, name)):
+                entry_type = "folder"
+            else:
+                ext = name.lower()
+                if ext.endswith(VIDEO_EXTENSIONS):
+                    entry_type = "video"
+                elif ext.endswith(AUDIO_EXTENSIONS):
+                    entry_type = "audio"
+            entries.append((name, entry_type, url))
         parent_path = get_parent(req_path)
         if parent_path is not None:
             parent_path = "/" + parent_path.strip("/")
