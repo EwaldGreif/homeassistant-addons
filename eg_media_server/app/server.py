@@ -54,7 +54,7 @@ def serve(req_path):
 @app.route("/play")
 def play():
     file_path = request.args.get("file")
-    abs_path = os.path.join(MEDIA_DIR, file_path)
+    abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
     if not abs_path or not os.path.isfile(abs_path):
         abort(404, "Datei nicht gefunden" + '#' + abs_path)
 
