@@ -43,7 +43,7 @@ def serve(req_path):
                     entry_type = "audio"
                 elif ext.endswith(IMAGE_EXTENSIONS):
                     entry_type = "image"
-                    ++imageCount
+                    imageCount += 1
             entries.append((name, entry_type, url))
         parent_path = get_parent(req_path)
         if parent_path is not None:
