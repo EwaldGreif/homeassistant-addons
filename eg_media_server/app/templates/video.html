@@ -14,7 +14,7 @@
   <h1>Video {{ file }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
   <button id="play" onclick="togglePlay()">Pause</button>
-  <input type="range" id="speed" min="0" max="4" step="0.5" value="1" onchange="speed()"></input>
+  <input type="number" id="speed" value="1" min="1" max="4" step="1" onchange="speed()"></input>
   <button id="mute" onclick="backward()">Backward</button>
   <button id="mute" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">Unmute</button></p>
@@ -40,8 +40,8 @@
     }
 
     function speed() {
-      const range = document.getElementById("speed");
-      video.playbackRate = parseFloat(range.value);
+      const speed = document.getElementById("speed");
+      video.playbackRate = parseFloat(speed.value);
     }
 
     function backward() {
