@@ -14,6 +14,9 @@
   <h1>Video {{ file }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
   <button id="play" onclick="togglePlay()">Pause</button>
+  <input type="range" id="speed" min="0" max="4" step="0.5" value="1" onchange="speed()"></input>
+  <button id="mute" onclick="backward()">Backward</button>
+  <button id="mute" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">Unmute</button></p>
   {% if mime.startswith('video/') %}
     <video controls autoplay muted id="video">
@@ -34,6 +37,19 @@
         video.pause();
         btn.innerText = "Play"
       }
+    }
+
+    function speed() {
+      const range = document.getElementById("speed");
+      video.playbackRate = parseFloat(range.value);
+    }
+
+    function backward() {
+      video.currentTime = Math.max(0, video.currentTime - 10);
+    }
+
+    function forward() {
+      video.currentTime = Math.min(video.duration, video.currentTime + 10);
     }
 
     function toggleMute() {
