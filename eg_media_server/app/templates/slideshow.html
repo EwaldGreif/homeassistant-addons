@@ -19,7 +19,7 @@
     <button onclick="prevImage()">Zurück</button>
     <button onclick="nextImage()">Weiter</button>
     <button id="autoplay" onclick="toggleAutoplay()">Diashow starten</button>
-    <input type="number" id="speed" value="3" min="1" max="10" step="1" onchange="speed()"></input>s
+    <input type="number" id="speed" value="3" min="1" max="10" step="1" onchange="speed()"></input> s
   </p>
 
   <img id="slideshow" src="{{ images[0] }}" alt="Slideshow Bild">
@@ -29,7 +29,6 @@
     const slides = JSON.parse('{{ images|tojson|safe }}');
     let current = 0;
     let autoplay = null;
-    let interval = 3000; // Geschwindigkeit in ms (konfigurierbar)
     showImage(0);
 
     function showImage(index) {
@@ -54,7 +53,8 @@
         btn.innerText = "Diashow starten"
         autoplay = null;
       } else {
-        autoplay = setInterval(nextImage, interval);
+        const speed = document.getElementById("speed");
+        autoplay = setInterval(nextImage, parseInt(speed.value, 10) * 1000);
         btn.innerText = "Diashow stoppen"
       }
     }
