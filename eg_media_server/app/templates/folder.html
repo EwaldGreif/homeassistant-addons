@@ -5,8 +5,7 @@
   <title>Verzeichnis {{ dir }}</title>
   <style>
     body { font-family: sans-serif; }
-    h1 { font-size: 1em; }
-    h1 { margin: 2px 0px 5px 0px; }
+    h1 { font-size: 1em; margin: 2px 0px 5px 0px; }
     p { margin: 0px 0px 5px 0px; }
     a:focus {
         outline: 3px solid orange;
@@ -46,9 +45,12 @@
 
   <script>
     if (document.referrer) {
+      alert("referrer=" + referrer);
       const list = document.getElementById('list');
       const firstItem = list.querySelector('li');
+      alert("firstitem=" + firstItem);
       if (firstItem) {
+        alert("focus");
         firstItem.focus();
       }      
     }

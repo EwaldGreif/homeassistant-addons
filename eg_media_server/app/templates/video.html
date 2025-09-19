@@ -5,8 +5,7 @@
   <title>Video {{ file.split('/')[-1] }}</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin: 20px; }
-    h1 { font-size: 1em; }
-    h1 { margin: 2px 0px 5px 0px; }
+    h1 { font-size: 1em; margin: 2px 0px 5px 0px; }
     p { margin: 0px 0px 5px 0px; }
     video { max-width: 90%; margin: 20px auto; display: block; }
   </style>
@@ -14,8 +13,8 @@
 <body>
   <h1>Video {{ file }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
-  <button onclick="togglePlay()">Pause</button>
-  <button onclick="toggleMute()">Unmute</button></p>
+  <button id="play" onclick="togglePlay()">Pause</button>
+  <button id="mute" onclick="toggleMute()">Unmute</button></p>
   {% if mime.startswith('video/') %}
     <video controls autoplay muted id="video">
       <source src="{{ file }}" type="{{ mime }}">
@@ -27,7 +26,7 @@
     const video = document.getElementById("video");
 
     function togglePlay() {
-      const btn = document.getElementById("autoplay");
+      const btn = document.getElementById("play");
       if (video.paused) {
         video.play();
         btn.innerText = "Pause"
@@ -38,7 +37,7 @@
     }
 
     function toggleMute() {
-      const btn = document.getElementById("autoplay");
+      const btn = document.getElementById("mute");
       if (video.muted) {
         video.muted = false;
         btn.innerText = "Mute"
