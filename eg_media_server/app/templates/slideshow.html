@@ -63,7 +63,7 @@
       if (autoplay) {
         const speed = document.getElementById("speed");
         clearInterval(autoplay);
-        autoplay = setInterval(nextImage, intparseFloat(speed.value));
+        autoplay = setInterval(nextImage, parseInt(speed.value, 10) * 1000);
       }
     }
   </script>
