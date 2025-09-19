@@ -15,7 +15,7 @@
     <button onclick="history.back()">Zurück zum Verzeichnis</button>
     <button onclick="prevImage()">Zurück</button>
     <button onclick="nextImage()">Weiter</button>
-    <button id="autoplay" onclick="toggleAutoplay()">Start Diashow</button>
+    <button id="autoplay" onclick="toggleAutoplay()">Diashow starten</button>
   </div>
 
   <img id="slideshow" src="{{ images[0] }}" alt="Slideshow Bild">
@@ -47,11 +47,11 @@
       const btn = document.getElementById("autoplay");
       if (autoplay) {
         clearInterval(autoplay);
-        btn.innerText = "Start Diashow"
+        btn.innerText = "Diashow starten"
         autoplay = null;
       } else {
         autoplay = setInterval(nextImage, interval);
-        btn.innerText = "Stop Diashow"
+        btn.innerText = "Diashow stoppen"
       }
     }
   </script>

@@ -5,6 +5,8 @@
   <title>Verzeichnis {{ dir }}</title>
   <style>
     body { font-family: sans-serif; }
+    h1 { margin: 2px 0px 5px 0px; }
+    p { margin: 5px 0px 5px 0px; }
     a:focus {
         outline: 3px solid orange;
         background-color: #222;
@@ -22,7 +24,7 @@
     {% endif %}</p>
   {% endif %}
 
-  <ul>
+  <ul id="list">
     {% if images > 1 %}
       <li>{{ images }} Bilder</li>
     {% endif %}
@@ -40,5 +42,15 @@
       {% endif %}
     {% endfor %}
   </ul>
+
+  <script>
+    if (document.activeElement === document.body) {
+      const list = document.getElementById('list');
+      const firstItem = list.querySelector('li'); // First entry
+      if (firstItem) {
+        firstItem.focus();
+      }      
+    }
+  </script>
 </body>
 </html>
