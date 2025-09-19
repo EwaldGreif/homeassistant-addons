@@ -5,17 +5,48 @@
   <title>Video {{ file.split('/')[-1] }}</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin: 20px; }
+    h1 { font-size: 1em; }
+    h1 { margin: 2px 0px 5px 0px; }
+    p { margin: 0px 0px 5px 0px; }
     video { max-width: 90%; margin: 20px auto; display: block; }
   </style>
 </head>
 <body>
   <h1>Video {{ file }}</h1>
-  <p><button onclick="history.back()">Zurück zum Verzeichnis</button></p>
+  <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
+  <button onclick="togglePlay()">Pause</button>
+  <button onclick="toggleMute()">Unmute</button></p>
   {% if mime.startswith('video/') %}
-    <video controls autoplay muted>
+    <video controls autoplay muted id="video">
       <source src="{{ file }}" type="{{ mime }}">
       Ihr Browser unterstützt dieses Video nicht.
     </video>
   {% endif %}
+
+  <script>
+    const video = document.getElementById("video");
+
+    function togglePlay() {
+      const btn = document.getElementById("autoplay");
+      if (video.paused) {
+        video.play();
+        btn.innerText = "Pause"
+      } else {
+        video.pause();
+        btn.innerText = "Play"
+      }
+    }
+
+    function toggleMute() {
+      const btn = document.getElementById("autoplay");
+      if (video.muted) {
+        video.muted = false;
+        btn.innerText = "Mute"
+      } else {
+        video.muted = true;
+        btn.innerText = "Unmute"
+      }
+    }
+  </script>
 </body>
 </html>

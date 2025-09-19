@@ -5,12 +5,15 @@
   <title>Diashow {{ dir }}</title>
   <style>
     body { font-family: sans-serif; text-align: center; }
+    h1 { font-size: 1em; }
+    h1, h2 { margin: 0px 0px 5px 0px; }
+    p { margin: 0px 0px 5px 0px; }
     img { max-width: 90%; max-height: 80vh; margin: 20px auto; display: block; }
   </style>
 </head>
 <body>
   <h1>Diashow {{ dir }}</h1>
-  <h3 id="subtitle"></h3>
+  <h2 id="subtitle"></h2>
   <div>
     <button onclick="history.back()">Zurück zum Verzeichnis</button>
     <button onclick="prevImage()">Zurück</button>
