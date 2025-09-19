@@ -44,8 +44,8 @@
   </ul>
 
   <script>
+    alert("referrer=" + document.referrer);
     if (document.referrer) {
-      alert("referrer=" + referrer);
       const list = document.getElementById('list');
       const firstItem = list.querySelector('li');
       alert("firstitem=" + firstItem);
