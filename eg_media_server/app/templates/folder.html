@@ -16,10 +16,9 @@
   <h1>{{ dir }}</h1>
 
   {% if parent_dir %}
-    <p><button onclick="history.back()">Eine Ebene zurück</button></p>
-    <p>⬅️ <a href="{{ parent_dir }}">Eine Ebene zurück</a>
+    <p><button onclick="history.back()">Eine Ebene zurück</button>
     {% if images > 1 %}
-      &nbsp;&nbsp;&nbsp;▶️ <a href="/slideshow?dir={{ dir }}">Diashow starten</a>
+      <button onclick="window.location.href='/slideshow?dir={{ dir }}'">Diashow starten</button>
     {% endif %}</p>
   {% endif %}
 
@@ -34,10 +33,8 @@
         <li><a href="/video?file={{ url }}">{{ name }}</a></li>
       {% elif type == "audio" %}
         <li><a href="/audio?file={{ url }}">{{ name }}</a></li>
-      {#
       {% elif type == "image" %}
-        <li><a href="{{ url }}">{{ name }}</a></li>
-      #}
+        {# <li><a href="{{ url }}">{{ name }}</a></li> #}
       {% else %}
         <li><a href="{{ url }}">{{ name }}</a></li>
       {% endif %}
