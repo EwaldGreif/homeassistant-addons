@@ -44,10 +44,9 @@
   </ul>
 
   <script>
-    alert("referrer=" + document.referrer);
     if (document.referrer) {
       const list = document.getElementById('list');
-      const firstItem = list.querySelector('li');
+      const firstItem = list.querySelector('li > a');
       alert("firstitem=" + firstItem);
       if (firstItem) {
         alert("focus=" + firstItem.innerText);
