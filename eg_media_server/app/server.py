@@ -44,8 +44,6 @@ def serve(req_path):
                 elif ext.endswith(IMAGE_EXTENSIONS):
                     entry_type = "image"
                     imageCount += 1
-                else:
-                    entry_type = "text"
             entries.append((name, entry_type, url))
         parent_path = get_parent(req_path)
         if parent_path is not None:
