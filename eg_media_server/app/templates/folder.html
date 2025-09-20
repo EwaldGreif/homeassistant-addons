@@ -38,6 +38,8 @@
         <li><a href="/audio?file={{ url }}">{{ name }}</a></li>
       {% elif type == "image" %}
         {# <li><a href="{{ url }}">{{ name }}</a></li> #}
+      {% elif type == "text" %}
+        {# <li><a href="{{ url }} target="_blank">{{ name }}</a></li> #}
       {% else %}
         <li><a href="{{ url }}">{{ name }}</a></li>
       {% endif %}
