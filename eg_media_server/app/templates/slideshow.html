@@ -7,14 +7,12 @@
     html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
     body { font-family: sans-serif; text-align: center; }
     h1 { font-size: 1em; margin: 0px; }
-    h2 { font-size: 1em; margin: 0px; }
     p { margin: 2px; }
     img { max-width: 90%; max-height: 80vh; margin: 0px auto; display: block; }
   </style>
 </head>
 <body>
-  <h1>Diashow {{ dir }}</h1>
-  <h2 id="subtitle"></h2>
+  <h1 id="header">Diashow {{ dir }}</h1>
   <p>
     <button onclick="history.back()">Zurück zum Verzeichnis</button>
     <button onclick="prevImage()">Zurück</button>
@@ -34,9 +32,9 @@
 
     function showImage(index) {
       current = (index + slides.length) % slides.length;
-      const subtitle = document.getElementById("subtitle");
-      subtitle.textContent = `${current} von ${slides.length} : ${slides[current].split('/').pop()}`;
+      const header = document.getElementById("header");
       img.src = slides[current];
+      header.textContent = `Diashow ${current} von ${slides.length - 1} : ${slides[current]}`;
     }
 
     function nextImage() {
