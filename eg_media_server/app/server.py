@@ -1,5 +1,4 @@
-import os
-import mimetypes
+import os, mimetypes, yaml
 from flask import Flask, request, abort, render_template, send_file
 from urllib.parse import quote, unquote
 
@@ -11,6 +10,7 @@ MEDIA_DIR = "/media"
 VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi')
 AUDIO_EXTENSIONS = ('.mp3', '.ogg', '.flac')
 IMAGE_EXTENSIONS = ('.jpeg', '.jpg', '.png')
+PLAYLIST_EXTENSIONS = ('.plst')
 
 def get_parent(path):
     if path == "":
@@ -22,7 +22,10 @@ def get_parent(path):
 def serve(req_path):
     req_path = unquote(req_path)  # URL-dekodieren
     abs_path = os.path.join(MEDIA_DIR, req_path)
-    referrer = request.referrer  # oder: request.headers.get('Referer')
+    parent_path = get_parent(req_path)
+    if parent_path is not None:
+        parent_path = "/" + parent_path.strip("/")
+    dir = "/" + req_path.strip("/")
 
     if not os.path.exists(abs_path):
         abort(404)
@@ -40,16 +43,23 @@ def serve(req_path):
                 ext = name.lower()
                 if ext.endswith(VIDEO_EXTENSIONS):
                     entry_type = "video"
+                    entries.append((name, entry_type, url))
                 elif ext.endswith(AUDIO_EXTENSIONS):
                     entry_type = "audio"
+                    entries.append((name, entry_type, url))
                 elif ext.endswith(IMAGE_EXTENSIONS):
                     entry_type = "image"
+                    entries.append((name, entry_type, url))
                     imageCount += 1
-            entries.append((name, entry_type, url))
-        parent_path = get_parent(req_path)
-        if parent_path is not None:
-            parent_path = "/" + parent_path.strip("/")
-        return render_template("folder.html", dir="/" + req_path.strip("/"), entries=entries, images=imageCount, parent_dir=parent_path, referrer=referrer)
+                elif ext.endswith(PLAYLIST_EXTENSIONS):
+                    entry_type = "playlist"
+                    with open(abs_path, "r", encoding="utf-8") as file:
+                        data = yaml.safe_load(file)
+                        name = data.get("title", "Unbekannte Playlist")
+                        for video in data.get("playlist", []):
+                            entries.append(video['title'], entry_type, video['src'])
+                            
+        return render_template("folder.html", dir, entries=entries, images=imageCount, parent_dir=parent_path)
     else:
         if not abs_path or not os.path.isfile(abs_path):
             abort(404, "Datei nicht gefunden")
