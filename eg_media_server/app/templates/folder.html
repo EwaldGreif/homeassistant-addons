@@ -32,7 +32,7 @@
     {% for name, type, href in entries %}
       {% if type == "folder" %}
         <li><a href="{{ href }}">{{ name }}</a></li>
-      {% if type == "playlist" %}
+      {% elif type == "playlist" %}
         <li><a href="{{ href }}">{{ name }}</a></li>
       {% elif type == "video" %}
         <li><a href="/video?href={{ href }}">{{ name }}</a></li>
