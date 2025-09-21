@@ -52,13 +52,13 @@ def serve(req_path):
                     entry_type = "image"
                     entries.append((name, entry_type, url))
                     imageCount += 1
-                #elif ext.endswith(PLAYLIST_EXTENSIONS):
-                #    entry_type = "playlist"
-                #    with open(abs_path, "r", encoding="utf-8") as file:
-                #        data = yaml.safe_load(file)
-                #        name = data.get("title", "Unbekannte Playlist")
-                #        for video in data.get("playlist", []):
-                #            entries.append(video['title'], entry_type, video['src'])
+                elif ext.endswith(PLAYLIST_EXTENSIONS):
+                    entry_type = "playlist"
+                    with open(abs_path, "r", encoding="utf-8") as file:
+                        data = yaml.safe_load(file)
+                        name = data.get("title", "Unbekannte Playlist")
+                        for video in data.get("playlist", []):
+                            entries.append(video['title'], entry_type, video['src'])
                             
         return render_template("folder.html", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     else:
