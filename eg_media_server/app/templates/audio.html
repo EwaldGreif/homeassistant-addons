@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Audio {{ file }}</title>
+  <title>Audio {{ source }}</title>
   <style>
     html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
     body { font-family: sans-serif; text-align: center; }
@@ -12,11 +12,11 @@
   </style>
 </head>
 <body>
-  <h1>Audio {{ file }}</h1>
+  <h1>Audio {{ source }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button></p>
   {% if mime.startswith('audio/') %}
     <audio controls>
-      <source src="{{ file }}" type="{{ mime }}">
+      <source src="{{ source }}" type="{{ mime }}">
       Ihr Browser unterstützt dieses Audio nicht.
     </audio>
   {% endif %}

@@ -16,7 +16,7 @@
   </style>
 </head>
 <body>
-  <h1>{{ dir }}</h1>
+  <h1>{{ dir }} from {{ referrer }} </h1>
 
   {% if parent_dir %}
     <p><button onclick="history.back()">Eine Ebene zurück</button>
@@ -29,17 +29,17 @@
     {% if images > 1 %}
       <li>{{ images }} Bilder</li>
     {% endif %}
-    {% for name, type, url in entries %}
+    {% for name, type, href in entries %}
       {% if type == "folder" %}
-        <li><a href="{{ url }}">{{ name }}</a></li>
+        <li><a href="{{ href }}">{{ name }}</a></li>
       {% elif type == "video" %}
-        <li><a href="/video?file={{ url }}">{{ name }}</a></li>
+        <li><a href="/video?href={{ href }}">{{ name }}</a></li>
       {% elif type == "audio" %}
-        <li><a href="/audio?file={{ url }}">{{ name }}</a></li>
+        <li><a href="/audio?href={{ href }}">{{ name }}</a></li>
       {% elif type == "image" %}
-        {# <li><a href="{{ url }}">{{ name }}</a></li> #}
+        {# <li><a href="{{ href }}">{{ name }}</a></li> #}
       {% else %}
-        <li><a href="{{ url }}">{{ name }}</a></li>
+        <li><a href="{{ href }}">{{ name }}</a></li>
       {% endif %}
     {% endfor %}
   </ul>

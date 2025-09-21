@@ -22,6 +22,7 @@ def get_parent(path):
 def serve(req_path):
     req_path = unquote(req_path)  # URL-dekodieren
     abs_path = os.path.join(MEDIA_DIR, req_path)
+    referrer = request.referrer  # oder: request.headers.get('Referer')
 
     if not os.path.exists(abs_path):
         abort(404)
@@ -48,7 +49,7 @@ def serve(req_path):
         parent_path = get_parent(req_path)
         if parent_path is not None:
             parent_path = "/" + parent_path.strip("/")
-        return render_template("folder.html", dir="/" + req_path.strip("/"), entries=entries, images=imageCount, parent_dir=parent_path)
+        return render_template("folder.html", dir="/" + req_path.strip("/"), entries=entries, images=imageCount, parent_dir=parent_path, referrer=referrer)
     else:
         if not abs_path or not os.path.isfile(abs_path):
             abort(404, "Datei nicht gefunden")
@@ -58,31 +59,21 @@ def serve(req_path):
 
 @app.route("/video")
 def video():
-    file_path = request.args.get("file")
-    abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
-    if not abs_path or not os.path.isfile(abs_path):
-        abort(404, "Datei nicht gefunden")
-
-    mime_type, _ = mimetypes.guess_type(file_path)
+    href = request.args.get("href")
+    mime_type, _ = mimetypes.guess_type(href)
     mime_type = mime_type or 'application/octet-stream'
-    
     if mime_type.startswith(('video/')):
-        return render_template("video.html", file=file_path, mime=mime_type)
+        return render_template("video.html", source=href, mime=mime_type)
     else:
         abort(404, "Keine Video-Datei")
 
 @app.route("/audio")
 def audio():
-    file_path = request.args.get("file")
-    abs_path = os.path.join(MEDIA_DIR, file_path.strip("/"))
-    if not abs_path or not os.path.isfile(abs_path):
-        abort(404, "Datei nicht gefunden")
-
-    mime_type, _ = mimetypes.guess_type(file_path)
+    href = request.args.get("href")
+    mime_type, _ = mimetypes.guess_type(href)
     mime_type = mime_type or 'application/octet-stream'
-    
     if mime_type.startswith(('audio/')):
-        return render_template("audio.html", file=file_path, mime=mime_type)
+        return render_template("audio.html", source=href, mime=mime_type)
     else:
         abort(404, "Keine Audio-Datei")
 
