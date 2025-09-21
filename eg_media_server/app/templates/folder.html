@@ -33,7 +33,7 @@
       {% if type == "folder" %}
         <li><a href="{{ href }}">{{ name }}</a></li>
       {% elif type == "playlist" %}
-        <li><a href="/playlist{{ href }}">{{ name }}</a></li>
+        <li><a href="/playlist?href={{ href }}">{{ name }}</a></li>
       {% elif type == "video" %}
         <li><a href="/video?href={{ href }}">{{ name }}</a></li>
       {% elif type == "audio" %}

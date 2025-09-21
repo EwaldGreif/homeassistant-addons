@@ -54,15 +54,8 @@ def serve(req_path):
                     imageCount += 1
                 elif ext.endswith(PLAYLIST_EXTENSIONS):
                     entry_type = "playlist"
-                    try:
-                        file_path = os.path.join(dir_path, name)
-                        with open(file_path, "r") as file:
-                            data = yaml.safe_load(file)
-                            entries.append((data['title'], entry_type, file_path))
-                            for video in data.get("playlist", []):
-                                entries.append((video['title'], entry_type, video['src']))
-                    except Exception as e:
-                        entries.append((name, entry_type, e))
+                    file_path = os.path.join(dir_path, name)
+                    entries.append((name, entry_type, file_path))
                             
         return render_template("folder.html", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     else:
@@ -71,6 +64,20 @@ def serve(req_path):
 
         mime_type, _ = mimetypes.guess_type(dir_path)
         return send_file(dir_path, mimetype=mime_type)
+
+@app.route("/playlist")
+def playlist():
+    file_path = request.args.get("href")
+    parent_path = get_parent(file_path)
+    entries = []
+    try:
+        with open(file_path, "r") as file:
+            data = yaml.safe_load(file)
+            for video in data.get("playlist", []):
+                entries.append((video['title'], "video", video['src']))
+    except Exception as e:
+        entries.append(("file_path", "ERROR", e))
+    return render_template("playlist.html", file=file_path, entries=entries, parent_dir=parent_path)
 
 @app.route("/video")
 def video():

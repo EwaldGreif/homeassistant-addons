@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist {{ file }}</title>
+  <style>
+    html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
+    body { font-family: sans-serif; }
+    h1 { font-size: 1em; margin: 0px; }
+    p { margin: 2px; }
+    a:focus {
+        outline: 3px solid orange;
+        background-color: #222;
+        color: #fff;
+    }  
+  </style>
+</head>
+<body>
+  <h1>{{ dir }}</h1>
+
+  {% if parent_dir %}
+    <p><button onclick="history.back()">Eine Ebene zurück</button></p>
+  {% endif %}
+
+  <ul id="list">
+    {% for name, type, href in entries %}
+      {% if type == "video" %}
+        <li><a href="/video?href={{ href }}">{{ name }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</body>
+</html>
