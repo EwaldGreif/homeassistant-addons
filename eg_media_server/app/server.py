@@ -54,7 +54,7 @@ def serve(req_path):
                     imageCount += 1
                 elif ext.endswith(PLAYLIST_EXTENSIONS):
                     entry_type = "playlist"
-                    entries.append(name, entry_type, abs_path)
+                    entries.append((name, entry_type, abs_path))
                     #with open(abs_path, "r", encoding="utf-8") as file:
                         #data = yaml.safe_load(file)
                         #for video in data.get("playlist", []):
