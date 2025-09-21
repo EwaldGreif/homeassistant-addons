@@ -84,7 +84,7 @@ def video():
     href = request.args.get("href")
     mime_type, _ = mimetypes.guess_type(href)
     mime_type = mime_type or 'application/octet-stream'
-    if mime_type.startswith(('video/')):
+    if mime_type.startswith(('video/') or mime_type == "application/vnd.apple.mpegurl"):
         return render_template("video.html", source=href, mime=mime_type)
     else:
         abort(404, f"Mime {mime_type} ist keine Video-Datei")
