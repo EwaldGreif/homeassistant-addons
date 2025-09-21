@@ -1,4 +1,4 @@
-import os, mimetypes, yaml
+import os, mimetypes
 from flask import Flask, request, abort, render_template, send_file
 from urllib.parse import quote, unquote
 
@@ -39,6 +39,7 @@ def serve(req_path):
             entry_type = "file"
             if os.path.isdir(os.path.join(abs_path, name)):
                 entry_type = "folder"
+                entries.append((name, entry_type, url))
             else:
                 ext = name.lower()
                 if ext.endswith(VIDEO_EXTENSIONS):
