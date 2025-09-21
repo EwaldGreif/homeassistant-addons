@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Video {{ file.split('/')[-1] }}</title>
+  <title>Video {{ file }}</title>
   <style>
     html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
     body { font-family: sans-serif; text-align: center; }
@@ -14,13 +14,13 @@
 <body>
   <h1>Video {{ file }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
-  <button id="play" onclick="togglePlay()">Pause</button>
+  <button id="play" onclick="togglePlay()">Play</button>
   Speed <input type="number" id="speed" value="1" min="1" max="4" step="1" onchange="speed()"></input>
   <button id="backward" onclick="backward()">Backward</button>
   <button id="forward" onclick="forward()">Forward</button>
-  <button id="mute" onclick="toggleMute()">Unmute</button></p>
+  <button id="mute" onclick="toggleMute()">Mute</button></p>
   {% if mime.startswith('video/') %}
-    <video controls autoplay muted id="video">
+    <video controls id="video">
       <source src="{{ file }}" type="{{ mime }}">
       Ihr Browser unterstützt dieses Video nicht.
     </video>
@@ -28,6 +28,7 @@
 
   <script>
     const video = document.getElementById("video");
+    document.getElementById('play').focus();
 
     function togglePlay() {
       const btn = document.getElementById("play");
