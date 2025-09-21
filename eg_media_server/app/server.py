@@ -76,7 +76,7 @@ def playlist():
             for video in data.get("playlist", []):
                 entries.append((video['title'], "video", video['src']))
     except Exception as e:
-        entries.append(("file_path", "ERROR", e))
+        abort(404, f"Fehler {e}")
     return render_template("playlist.html", file=file_path, entries=entries, parent_dir=parent_path)
 
 @app.route("/video")
@@ -87,7 +87,7 @@ def video():
     if mime_type.startswith(('video/')):
         return render_template("video.html", source=href, mime=mime_type)
     else:
-        abort(404, "Keine Video-Datei")
+        abort(404, f"Mime {mime_type} ist keine Video-Datei")
 
 @app.route("/audio")
 def audio():
@@ -97,14 +97,14 @@ def audio():
     if mime_type.startswith(('audio/')):
         return render_template("audio.html", source=href, mime=mime_type)
     else:
-        abort(404, "Keine Audio-Datei")
+        abort(404, f"Mime {mime_type} ist keine Audio-Datei")
 
 @app.route("/slideshow")
 def slideshow():
     dir_path = request.args.get("dir")
     abs_path = os.path.join(MEDIA_DIR, dir_path.strip("/"))
     if not abs_path or not os.path.isdir(abs_path):
-        abort(404, "Verzeichnis nicht gefunden")
+        abort(404, f"Verzeichnis {abs_path} nicht gefunden")
 
     images = []
     for name in sorted(os.listdir(abs_path)):
@@ -121,7 +121,7 @@ def slideshow():
                 images.append((image_path))
 
     if len(images) < 2:
-        abort(400, "Nicht genug Bilder für eine Diashow")
+        abort(400, f"{images} sind nicht genug Bilder für eine Diashow")
 
     return render_template("slideshow.html", images=images, dir=dir_path)
 
