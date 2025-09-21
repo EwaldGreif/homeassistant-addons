@@ -1,4 +1,5 @@
-import os, mimetypes
+import os
+import mimetypes
 from flask import Flask, request, abort, render_template, send_file
 from urllib.parse import quote, unquote
 
@@ -60,7 +61,7 @@ def serve(req_path):
                 #        for video in data.get("playlist", []):
                 #            entries.append(video['title'], entry_type, video['src'])
                             
-        return render_template("folder.html", dir, entries=entries, images=imageCount, parent_dir=parent_path)
+        return render_template("folder.html", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     else:
         if not abs_path or not os.path.isfile(abs_path):
             abort(404, "Datei nicht gefunden")
