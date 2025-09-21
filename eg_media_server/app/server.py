@@ -53,11 +53,12 @@ def serve(req_path):
                     entries.append((name, entry_type, url))
                     imageCount += 1
                 elif ext.endswith(PLAYLIST_EXTENSIONS):
-                    entry_type = "video"
+                    entry_type = "playlist"
                     try:
                         file_path = os.path.join(dir_path, name)
                         with open(file_path, "r") as file:
                             data = yaml.safe_load(file)
+                            entries.append((data['title'], entry_type, file_path))
                             for video in data.get("playlist", []):
                                 entries.append((video['title'], entry_type, video['src']))
                     except Exception as e:
