@@ -55,8 +55,8 @@ def serve(req_path):
                 elif ext.endswith(PLAYLIST_EXTENSIONS):
                     entry_type = "video"
                     entries.append((name, entry_type, abs_path))
-                    #with open(abs_path, "r", encoding="utf-8") as file:
-                        #data = yaml.safe_load(file)
+                    with open(abs_path, "r", encoding="utf-8") as file:
+                        data = yaml.safe_load(file)
                         #for video in data.get("playlist", []):
                         #    url = video.get("src", "unknown")
                         #    entries.append((video['title'], entry_type, video['src']))
