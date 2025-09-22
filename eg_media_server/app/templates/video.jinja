@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Video {{ source }}</title>
+  <title>Video {{ title }}</title>
   <style>
     html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
     body { font-family: sans-serif; text-align: center; }
@@ -10,9 +10,13 @@
     p { margin: 2px; }
     video { max-width: 90%; max-height: 80vh; margin: 0px auto; display: block; }
   </style>
+  {% if isHls %}
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  {% endif %}
+
 </head>
 <body>
-  <h1>Video {{ source }}</h1>
+  <h1>Video {{ title }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
   <button id="play" onclick="togglePlay()">Play</button>
   Speed <input type="number" id="speed" value="1" min="1" max="4" step="1" onchange="speed()"></input>
@@ -28,7 +32,19 @@
 
   <script>
     document.getElementById('play').focus();
-    const video = document.getElementById("video");
+    const video = document.getElementById("video")
+    {% if isHls %}
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(source);
+          hls.attachMedia(video);
+          hls.startLevel = 1;
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = videoSrc;
+        } else {
+          console.error('Dein Browser unterstützt HLS nicht.');
+        }
+    {% endif %}
 
     function togglePlay() {
       const btn = document.getElementById("play");
