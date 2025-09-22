@@ -52,6 +52,9 @@ def serve(req_path):
                     entry_type = "image"
                     entries.append((name, entry_type, url))
                     imageCount += 1                            
+                elif ext.endswith(PLAYLIST_EXTENSIONS):
+                    entry_type = "playlist"
+                    entries.append((name, entry_type, url))
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     elif req_path.endswith(PLAYLIST_EXTENSIONS):
         file_path = os.path.join(MEDIA_DIR, req_path)
