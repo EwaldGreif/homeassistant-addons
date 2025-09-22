@@ -28,6 +28,8 @@
       <source src="{{ source }}" type="{{ mime }}">
       Ihr Browser unterstützt dieses Video nicht.
     </video>
+  {% else %}
+    <video controls id="video"></video>
   {% endif %}
 
   <script>
