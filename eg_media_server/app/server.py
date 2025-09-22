@@ -57,6 +57,7 @@ def serve(req_path):
                     entries.append((name, entry_type, url))
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     elif req_path.endswith(PLAYLIST_EXTENSIONS):
+        url = "/" + req_path;
         file_path = os.path.join(MEDIA_DIR, req_path)
         try:
             with open(file_path, "r") as file:
@@ -65,7 +66,7 @@ def serve(req_path):
                     entries.append((video['title'], "video", video['src']))
         except Exception as e:
             abort(404, f"Fehler {e}")
-        return render_template("playlist.jinja", file=req_path, entries=entries, parent_dir=parent_path)
+        return render_template("playlist.jinja", file=url, entries=entries, parent_dir=parent_path)
     else:
         if not dir_path or not os.path.isfile(dir_path):
             abort(404, "Datei nicht gefunden")
