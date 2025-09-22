@@ -8,7 +8,7 @@
     body { font-family: sans-serif; text-align: center; }
     h1 { font-size: 1em; margin: 0px; }
     p { margin: 2px; }
-    video { max-width: 90%; max-height: 80vh; margin: 0px auto; display: block; }
+    video { width: 100%; max-height: 80vh; aspect-ratio: 16 / 9; margin: 0px auto; display: block; object-fit: contain; }
   </style>
   {% if isHls %}
 	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -41,7 +41,6 @@
           const hls = new Hls();
           hls.loadSource(videoSource);
           hls.attachMedia(video);
-          //hls.startLevel = 1;
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
           video.src = videoSource;
         } else {
