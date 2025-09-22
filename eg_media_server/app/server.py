@@ -54,8 +54,7 @@ def serve(req_path):
                     imageCount += 1
                 elif ext.endswith(PLAYLIST_EXTENSIONS):
                     entry_type = "playlist"
-                    file_path = os.path.join(dir_path, name)
-                    entries.append((name, entry_type, file_path))
+                    entries.append((name, entry_type, url))
                             
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     else:
@@ -67,8 +66,11 @@ def serve(req_path):
 
 @app.route("/playlist")
 def playlist():
-    file_path = request.args.get("href")
-    parent_path = get_parent(file_path)
+    req_path = unquote(req_path)  # URL-dekodieren
+    file_path = os.path.join(MEDIA_DIR, req_path)
+    parent_path = get_parent(req_path)
+    if parent_path is not None:
+        parent_path = "/" + parent_path.strip("/")
     entries = []
     try:
         with open(file_path, "r") as file:
