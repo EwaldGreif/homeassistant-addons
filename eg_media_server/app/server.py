@@ -65,7 +65,7 @@ def serve(req_path):
                     entries.append((video['title'], "video", video['src']))
         except Exception as e:
             abort(404, f"Fehler {e}")
-        return render_template("playlist.jinja", file=file_path, entries=entries, parent_dir=parent_path)
+        return render_template("playlist.jinja", file=req_path, entries=entries, parent_dir=parent_path)
     else:
         if not dir_path or not os.path.isfile(dir_path):
             abort(404, "Datei nicht gefunden")
