@@ -24,12 +24,12 @@
   <button id="forward" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">Mute</button></p>
   {% if mime.startswith('video/') %}
-    <video controls id="video">
+    <video id="video">
       <source src="{{ source }}" type="{{ mime }}">
       Ihr Browser unterstützt dieses Video nicht.
     </video>
   {% else %}
-    <video controls id="video"></video>
+    <video id="video"></video>
   {% endif %}
 
   <script>
@@ -51,6 +51,7 @@
     function togglePlay() {
       const btn = document.getElementById("play");
       if (video.paused) {
+        video.controls = true;
         video.play();
         btn.innerText = "Pause"
       } else {
