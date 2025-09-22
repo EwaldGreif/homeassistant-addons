@@ -23,7 +23,7 @@
   <button id="backward" onclick="backward()">Backward</button>
   <button id="forward" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">Mute</button>
-  <button id="controls" onclick="toggleControls()">Show Controls</button></p>
+  <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
   {% if mime.startswith('video/') %}
     <video id="video">
       <source src="{{ source }}" type="{{ mime }}">
@@ -48,6 +48,18 @@
           console.error('Dein Browser unterstützt HLS nicht.');
         }
     {% endif %}
+    video.addEventListener('loadedmetadata', () => {
+      document.getElementById('duration').textContent = formatTime(video.duration);
+    });
+    video.addEventListener('timeupdate', () => {
+      document.getElementById('runtime').textContent = formatTime(video.currentTime);
+    });
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
 
     function togglePlay() {
       const btn = document.getElementById("play");
@@ -81,17 +93,6 @@
       } else {
         video.muted = true;
         btn.innerText = "Unmute"
-      }
-    }
-
-    function toggleControls() {
-      const btn = document.getElementById("controls");
-      if (video.controls) {
-        video.controls = false;
-        btn.innerText = "Show Controls"
-      } else {
-        video.controls = true;
-        btn.innerText = "Hide Controls"
       }
     }
   </script>
