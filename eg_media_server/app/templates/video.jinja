@@ -42,7 +42,7 @@
           hls.attachMedia(video);
           hls.startLevel = 1;
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = videoSrc;
+          video.src = source;
         } else {
           console.error('Dein Browser unterstützt HLS nicht.');
         }
