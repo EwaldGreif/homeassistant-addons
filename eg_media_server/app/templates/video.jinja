@@ -34,9 +34,9 @@
 
   <script>
     document.getElementById('play').focus();
-    const video = document.getElementById("video")
+    const video = document.getElementById("video");
     {% if isHls %}
-        const videoSource = ${source}
+        const videoSource = ${source};
         if (Hls.isSupported()) {
           const hls = new Hls();
           hls.loadSource(videoSource);
