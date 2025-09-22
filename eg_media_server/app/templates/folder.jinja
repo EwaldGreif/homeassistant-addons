@@ -21,7 +21,7 @@
   {% if parent_dir %}
     <p><button onclick="history.back()">Eine Ebene zurück</button>
     {% if images > 1 %}
-      <button onclick="window.location.href='/slideshow?dir={{ dir }}'">Diashow starten</button>
+      <button id="startSlideshow" onclick="window.location.href='/slideshow?dir={{ dir }}'">Diashow starten</button>
     {% endif %}</p>
   {% endif %}
 
@@ -47,6 +47,9 @@
   </ul>
 
   <script>
+    {% if images > 1 %}
+    document.getElementById("startSlideshow").focus();
+    {% endif %}
     if (document.referrer) {
       const list = document.getElementById('list');
       const firstItem = list.querySelector('li > a');
