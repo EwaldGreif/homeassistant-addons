@@ -23,6 +23,7 @@
   <button id="backward" onclick="backward()">Backward</button>
   <button id="forward" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">Mute</button></p>
+  <button id="controls" onclick="toggleControls()">Show Controls</button></p>
   {% if mime.startswith('video/') %}
     <video id="video">
       <source src="{{ source }}" type="{{ mime }}">
@@ -51,7 +52,6 @@
     function togglePlay() {
       const btn = document.getElementById("play");
       if (video.paused) {
-        video.controls = true;
         video.play();
         btn.innerText = "Pause"
       } else {
@@ -81,6 +81,17 @@
       } else {
         video.muted = true;
         btn.innerText = "Unmute"
+      }
+    }
+
+    function toggleControls() {
+      const btn = document.getElementById("controls");
+      if (video.controls) {
+        video.controls = false;
+        btn.innerText = "Show Controls"
+      } else {
+        video.controls = true;
+        btn.innerText = "Hide Controls"
       }
     }
   </script>
