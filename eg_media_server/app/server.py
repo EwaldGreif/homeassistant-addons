@@ -30,8 +30,8 @@ def serve(req_path):
     if not os.path.exists(dir_path):
         abort(404)
 
+    entries = []
     if os.path.isdir(dir_path):
-        entries = []
         imageCount = 0
         for name in sorted(os.listdir(dir_path)):
             entry_path = os.path.join(req_path, name).replace("\\", "/")
@@ -57,6 +57,16 @@ def serve(req_path):
                     entries.append((name, entry_type, url))
                             
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
+    elif req_path.endswith(PLAYLIST_EXTENSIONS):
+        file_path = os.path.join(MEDIA_DIR, req_path)
+        try:
+            with open(file_path, "r") as file:
+                data = yaml.safe_load(file)
+                for video in data.get("playlist", []):
+                    entries.append((video['title'], "video", video['src']))
+        except Exception as e:
+            abort(404, f"Fehler {e}")
+        return render_template("playlist.jinja", file=file_path, entries=entries, parent_dir=parent_path)
     else:
         if not dir_path or not os.path.isfile(dir_path):
             abort(404, "Datei nicht gefunden")
