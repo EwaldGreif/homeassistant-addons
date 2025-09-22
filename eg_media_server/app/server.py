@@ -51,11 +51,7 @@ def serve(req_path):
                 elif ext.endswith(IMAGE_EXTENSIONS):
                     entry_type = "image"
                     entries.append((name, entry_type, url))
-                    imageCount += 1
-                elif ext.endswith(PLAYLIST_EXTENSIONS):
-                    entry_type = "playlist"
-                    entries.append((name, entry_type, url))
-                            
+                    imageCount += 1                            
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     elif req_path.endswith(PLAYLIST_EXTENSIONS):
         file_path = os.path.join(MEDIA_DIR, req_path)
@@ -70,26 +66,8 @@ def serve(req_path):
     else:
         if not dir_path or not os.path.isfile(dir_path):
             abort(404, "Datei nicht gefunden")
-
         mime_type, _ = mimetypes.guess_type(dir_path)
         return send_file(dir_path, mimetype=mime_type)
-
-@app.route("/playlist")
-def playlist():
-    req_path = unquote(req_path)  # URL-dekodieren
-    file_path = os.path.join(MEDIA_DIR, req_path)
-    parent_path = get_parent(req_path)
-    if parent_path is not None:
-        parent_path = "/" + parent_path.strip("/")
-    entries = []
-    try:
-        with open(file_path, "r") as file:
-            data = yaml.safe_load(file)
-            for video in data.get("playlist", []):
-                entries.append((video['title'], "video", video['src']))
-    except Exception as e:
-        abort(404, f"Fehler {e}")
-    return render_template("playlist.jinja", file=file_path, entries=entries, parent_dir=parent_path)
 
 @app.route("/video")
 def video():
