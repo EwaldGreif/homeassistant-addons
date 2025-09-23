@@ -28,7 +28,7 @@ def serve(req_path):
     dir = "/" + req_path.strip("/")
 
     if not os.path.exists(dir_path):
-        abort(404)
+        abort(500, f"Verzeichnis {dir} existiert nicht")
 
     entries = []
     if os.path.isdir(dir_path):
@@ -63,7 +63,7 @@ def serve(req_path):
                 for video in data.get("playlist", []):
                     entries.append((video['title'], "video", video['src']))
         except Exception as e:
-            abort(404, f"Fehler {e}")
+            abort(500, f"Fehler {e}")
         return render_template("playlist.jinja", file=url, entries=entries, parent_dir=parent_path)
     else:
         mime_type, _ = mimetypes.guess_type(dir_path)
@@ -82,16 +82,13 @@ def video():
     elif mime_type == "application/vnd.apple.mpegurl":
         return render_template("videoHls.jinja", title=title, source=href, mime=mime_type)
     else:
-        try:
-            parsedHref = urlparse(href)
-            if parsedHref.netloc.endsWith("youtube.com"):
-                params = parse_qs(parsedHref.query)
-                video = params.get('v', [None])
-                if (video):
-                    return render_template("videoYoutube.jinja", title=title, source=href, video=video[0])
-            abort(404, f"Ungültiges href = {href}")
-        except Exception as e:
-            abort(404, f"Fehler {e}")
+        parsedHref = urlparse(href)
+        if parsedHref.netloc.endswith("youtube.com"):
+            params = parse_qs(parsedHref.query)
+            video = params.get('v', [None])
+            if (video):
+                return render_template("videoYoutube.jinja", title=title, source=href, video=video[0])
+        abort(500, f"Ungültiges href = {href}")
 
 @app.route("/audio")
 def audio():
@@ -101,14 +98,14 @@ def audio():
     if mime_type.startswith('audio/'):
         return render_template("audio.jinja", source=href, mime=mime_type)
     else:
-        abort(404, f"Mime {mime_type} ist keine Audio-Datei")
+        abort(500, f"Mime {mime_type} ist keine Audio-Datei")
 
 @app.route("/slideshow")
 def slideshow():
     dir_path = request.args.get("dir")
     abs_path = os.path.join(MEDIA_DIR, dir_path.strip("/"))
     if not abs_path or not os.path.isdir(abs_path):
-        abort(404, f"Verzeichnis {abs_path} nicht gefunden")
+        abort(500, f"Verzeichnis {abs_path} nicht gefunden")
 
     images = []
     for name in sorted(os.listdir(abs_path)):
@@ -125,7 +122,7 @@ def slideshow():
                 images.append((image_path))
 
     if len(images) < 2:
-        abort(400, f"{images} sind nicht genug Bilder für eine Diashow")
+        abort(500, f"{images} sind nicht genug Bilder für eine Diashow")
 
     return render_template("slideshow.jinja", images=images, dir=dir_path)
 
