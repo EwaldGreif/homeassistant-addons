@@ -39,22 +39,20 @@ def serve(req_path):
             entry_type = "file"
             if os.path.isdir(os.path.join(dir_path, name)):
                 entry_type = "folder"
-                entries.append((name, entry_type, url))
             else:
                 ext = name.lower()
                 if ext.endswith(VIDEO_EXTENSIONS):
                     entry_type = "video"
-                    entries.append((name, entry_type, url))
                 elif ext.endswith(AUDIO_EXTENSIONS):
                     entry_type = "audio"
-                    entries.append((name, entry_type, url))
                 elif ext.endswith(IMAGE_EXTENSIONS):
                     entry_type = "image"
-                    entries.append((name, entry_type, url))
                     imageCount += 1                            
                 elif ext.endswith(PLAYLIST_EXTENSIONS):
                     entry_type = "playlist"
-                    entries.append((name, entry_type, url))
+                else:
+                    entry_type = "file"
+        entries.append((name, entry_type, url))
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     elif req_path.endswith(PLAYLIST_EXTENSIONS):
         url = "/" + req_path;
