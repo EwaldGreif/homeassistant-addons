@@ -85,7 +85,7 @@ def video():
         parsedUrl = urlparse(href)
         if parsedUrl.hostname == "youtube.com":
             params = parse_qs(parsedUrl.query)
-            video = params.get('video', [None])[0]
+            video = params.get('v', [None])[0]
             return render_template("video.youtube.jinja", title=title, source=href, video=video)
         else:
             abort(404, f"Mime {mime_type} ist keine Video-Datei")
