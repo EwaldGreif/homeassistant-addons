@@ -10,7 +10,7 @@ MEDIA_DIR = "/media"
 VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi')
 AUDIO_EXTENSIONS = ('.mp3', '.ogg', '.flac')
 IMAGE_EXTENSIONS = ('.jpeg', '.jpg', '.png')
-PLAYLIST_EXTENSIONS = ('.plst')
+PLAYLIST_EXTENSIONS = ('.playlist')
 
 def get_parent(path):
     if path == "":
@@ -79,9 +79,10 @@ def video():
         title = title[:25] + "..." + title[-20:]
     mime_type, _ = mimetypes.guess_type(href)
     mime_type = mime_type or 'application/octet-stream'
-    if mime_type.startswith('video/') or mime_type == "application/vnd.apple.mpegurl":
-        isHls = not mime_type.startswith('video/')
-        return render_template("video.jinja", title=title, source=href, mime=mime_type, isHls=isHls)
+    if mime_type.startswith('video/'):
+        return render_template("video.jinja", title=title, source=href, mime=mime_type)
+    elif mime_type == "application/vnd.apple.mpegurl":
+        return render_template("video.Hls.jinja", title=title, source=href, mime=mime_type)
     else:
         abort(404, f"Mime {mime_type} ist keine Video-Datei")
 
