@@ -83,8 +83,7 @@ def video():
         return render_template("videoHls.jinja", title=title, source=href, mime=mime_type)
     else:
         parsedHref = urlparse(href)
-        abort(404, f"parsedHref = {str(parsedHref)}")
-        if parsedHref.hostname.endsWith("youtube.com"):
+        if parsedHref.netloc.endsWith("youtube.com"):
             params = parse_qs(parsedHref.query)
             video = params.get('v', [None])
             if (video):
