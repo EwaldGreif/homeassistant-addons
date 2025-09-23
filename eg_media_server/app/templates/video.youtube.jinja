@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Video {{ title }}</title>
+  <style>
+    html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
+    body { font-family: sans-serif; text-align: center; }
+    h1 { font-size: 1em; margin: 0px; }
+    p { margin: 2px; }
+    video { width: 100%; max-height: 80vh; aspect-ratio: 16 / 9; margin: 0px auto; display: block; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <h1>Video {{ title }}</h1>
+  <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
+  <button id="play" onclick="togglePlay()">Play</button>
+  Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()">
+  <button id="backward" onclick="backward()">Backward</button>
+  <button id="forward" onclick="forward()">Forward</button>
+  <button id="mute" onclick="toggleMute()">Mute</button>
+  <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
+  <iframe id="youtube-frame" width="640" height="390"
+          src="https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0"
+          frameborder="0"></iframe>
+
+  <script>
+    // This code loads the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // This function creates a YouTube player after the API code is loaded.
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('youtube-frame', {
+        events: {
+          'onReady': onPlayerReady,
+        }
+      });
+    }
+
+    document.getElementById('play').focus();
+    const video = document.getElementById("video");
+    video.addEventListener('loadedmetadata', () => {
+      document.getElementById('duration').textContent = formatTime(video.duration);
+    });
+    video.addEventListener('timeupdate', () => {
+      document.getElementById('runtime').textContent = formatTime(video.currentTime);
+    });
+    togglePlay();
+
+    function onPlayerReady(event) {
+      player.setSize(1280, 720);
+      setInterval(updateRuntime, 1000);
+    }
+
+	  function togglePlay() {
+		  const btn = document.getElementById("play");
+		  const state = player.getPlayerState();
+		  if (state != 1) {
+			player.playVideo();
+			btn.innerText = "Pause";
+		  } else {
+			player.pauseVideo();
+			btn.innerText = "Play";
+		  }
+	  }
+
+    function toggleMute() {
+      const btn = document.getElementById("mute");
+      if (player.isMuted()) {
+        player.unMute();
+        btn.innerText = "Mute";
+      } else {
+        player.mute();
+        btn.innerText = "Unmute";
+      }
+    }
+	
+    function speed() {
+      const speed = document.getElementById("speed");
+      player.setPlaybackRate(parseFloat(speed.value));
+    }
+
+    function backward() {
+	  const currentTime = player.getCurrentTime();
+	  player.seekTo(Math.max(0, currentTime - 10));
+    }
+
+    function forward() {
+	  const currentTime = player.getCurrentTime();
+	  const duration = player.getDuration();
+	  player.seekTo(Math.min(duration, currentTime + 10));
+    }
+
+    function updateRuntime() {
+      const currentTime = player.getCurrentTime();
+      const duration = player.getDuration();
+      document.getElementById('runtime').textContent = formatTime(currentTime);
+      document.getElementById('duration').textContent = formatTime(duration);
+    }
+	
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+  </script>
+</body>
+</html>
