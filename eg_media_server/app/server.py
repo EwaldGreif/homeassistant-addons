@@ -52,7 +52,7 @@ def serve(req_path):
                     entry_type = "playlist"
                 else:
                     entry_type = "file"
-        entries.append((name, entry_type, url))
+            entries.append((name, entry_type, url))
         return render_template("folder.jinja", dir=dir, entries=entries, images=imageCount, parent_dir=parent_path)
     elif req_path.endswith(PLAYLIST_EXTENSIONS):
         url = "/" + req_path;
