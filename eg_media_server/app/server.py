@@ -80,13 +80,13 @@ def video():
     if mime_type.startswith('video/'):
         return render_template("video.jinja", title=title, source=href, mime=mime_type)
     elif mime_type == "application/vnd.apple.mpegurl":
-        return render_template("video.hls.jinja", title=title, source=href, mime=mime_type)
+        return render_template("videoHls.jinja", title=title, source=href, mime=mime_type)
     else:
         parsedUrl = urlparse(href)
         if parsedUrl.hostname.endsWith("youtube.com"):
             params = parse_qs(parsedUrl.query)
             video = params.get('v', [None])[0]
-            return render_template("video.youtube.jinja", title=title, source=href, video=video)
+            return render_template("videoYoutube.jinja", title=title, source=href, video=video)
         else:
             abort(404, f"Mime {mime_type} ist keine Video-Datei")
 
