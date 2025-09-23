@@ -82,13 +82,16 @@ def video():
     elif mime_type == "application/vnd.apple.mpegurl":
         return render_template("videoHls.jinja", title=title, source=href, mime=mime_type)
     else:
-        parsedHref = urlparse(href)
-        if parsedHref.netloc.endsWith("youtube.com"):
-            params = parse_qs(parsedHref.query)
-            video = params.get('v', [None])
-            if (video):
-              return render_template("videoYoutube.jinja", title=title, source=href, video=video[0])
-        abort(404, f"Ungültiges href = {href}")
+        try:
+            parsedHref = urlparse(href)
+            if parsedHref.netloc.endsWith("youtube.com"):
+                params = parse_qs(parsedHref.query)
+                video = params.get('v', [None])
+                if (video):
+                    return render_template("videoYoutube.jinja", title=title, source=href, video=video[0])
+            abort(404, f"Ungültiges href = {href}")
+        except Exception as e:
+            abort(404, f"Fehler {e}")
 
 @app.route("/audio")
 def audio():
