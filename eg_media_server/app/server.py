@@ -1,5 +1,6 @@
-import os, mimetypes, yaml, urllib
+import os, mimetypes, yaml
 from flask import Flask, request, abort, render_template, send_file
+from urllib.parse import quote, unquote, parse, parse_qs
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
@@ -19,7 +20,7 @@ def get_parent(path):
 @app.route("/", defaults={"req_path": ""})
 @app.route("/<path:req_path>")
 def serve(req_path):
-    req_path = urllib.unquote(req_path)  # URL-dekodieren
+    req_path = unquote(req_path)  # URL-dekodieren
     dir_path = os.path.join(MEDIA_DIR, req_path)
     parent_path = get_parent(req_path)
     if parent_path is not None:
@@ -34,7 +35,7 @@ def serve(req_path):
         imageCount = 0
         for name in sorted(os.listdir(dir_path)):
             entry_path = os.path.join(req_path, name).replace("\\", "/")
-            url = "/" + urllib.quote(entry_path)
+            url = "/" + quote(entry_path)
             entry_type = "file"
             if os.path.isdir(os.path.join(dir_path, name)):
                 entry_type = "folder"
@@ -83,9 +84,9 @@ def video():
     elif mime_type == "application/vnd.apple.mpegurl":
         return render_template("video.hls.jinja", title=title, source=href, mime=mime_type)
     else:
-        parsedUrl = urllib.parse(href)
+        parsedUrl = parse(href)
         if parsedUrl.hostname == "youtube.com":
-            params = urllib.parse_qs(parsedUrl.query)
+            params = parse_qs(parsedUrl.query)
             video = params.get('video', [None])[0]
             return render_template("video.youtube.jinja", title=title, source=href, video=video)
         else:
