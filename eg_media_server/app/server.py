@@ -83,7 +83,7 @@ def video():
         return render_template("video.hls.jinja", title=title, source=href, mime=mime_type)
     else:
         parsedUrl = urlparse(href)
-        if parsedUrl.hostname == "youtube.com":
+        if parsedUrl.hostname.endsWith("youtube.com"):
             params = parse_qs(parsedUrl.query)
             video = params.get('v', [None])[0]
             return render_template("video.youtube.jinja", title=title, source=href, video=video)

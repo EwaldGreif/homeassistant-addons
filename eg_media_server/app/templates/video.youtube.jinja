@@ -49,7 +49,6 @@
     video.addEventListener('timeupdate', () => {
       document.getElementById('runtime').textContent = formatTime(video.currentTime);
     });
-    togglePlay();
 
     function onPlayerReady(event) {
       player.setSize(1280, 720);
