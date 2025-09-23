@@ -1,6 +1,6 @@
 import os, mimetypes, yaml
 from flask import Flask, request, abort, render_template, send_file
-from urllib.parse import quote, unquote, parse, parse_qs
+from urllib.parse import quote, unquote, urlparse, parse_qs
 
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
@@ -66,8 +66,6 @@ def serve(req_path):
             abort(404, f"Fehler {e}")
         return render_template("playlist.jinja", file=url, entries=entries, parent_dir=parent_path)
     else:
-        if not dir_path or not os.path.isfile(dir_path):
-            abort(404, "Datei nicht gefunden")
         mime_type, _ = mimetypes.guess_type(dir_path)
         return send_file(dir_path, mimetype=mime_type)
 
@@ -84,7 +82,7 @@ def video():
     elif mime_type == "application/vnd.apple.mpegurl":
         return render_template("video.hls.jinja", title=title, source=href, mime=mime_type)
     else:
-        parsedUrl = parse(href)
+        parsedUrl = urlparse(href)
         if parsedUrl.hostname == "youtube.com":
             params = parse_qs(parsedUrl.query)
             video = params.get('video', [None])[0]
