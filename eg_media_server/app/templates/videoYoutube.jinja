@@ -20,16 +20,19 @@
   <button id="forward" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">Mute</button>
   <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
-  <iframe id="youtube-frame" width="640" height="390"
-          src="https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0"
-          frameborder="0"></iframe>
+  <iframe id="youtube-frame" width="640" height="390" frameborder="0"></iframe>
 
   <script>
     const iframe = document.getElementById('youtube-frame');
     height = 0.8 * window.innerHeight;
-    width = Math.min(window.innerWidth, height * 1.777);
+    width = height * 1.777;
+    if (width > window.innerWidth) {
+      width = window.innerWidth;
+      height = width / 1.777;
+    }
     iframe.height = height + "px";
     iframe.width = width + "px";
+    iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0"
 
     // This code loads the IFrame Player API code asynchronously.
     var tag = document.createElement('script');
