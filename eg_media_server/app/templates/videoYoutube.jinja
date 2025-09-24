@@ -115,20 +115,21 @@
     }
 
     function updateRuntime() {
-      if (starting) return;
-		  const state = player.getPlayerState();
-      if (state == 1) {
-        document.getElementById('play').innerText = "Pause";
-      } else if (state == 2 || state == 5) {
-        document.getElementById('play').innerText = "Play";
-      } else {
-        document.getElementById('play').innerText = "-" + state + "-";
-        document.getElementById('play').blur();
-      }
-      if (player.isMuted()) {
-        document.getElementById('mute').innerText = "Unmute";
-      } else {
-        document.getElementById('mute').innerText = "Mute";
+      if (!starting) {
+        const state = player.getPlayerState();
+        if (state == 1) {
+          document.getElementById('play').innerText = "Pause";
+        } else if (state == 2 || state == 5) {
+          document.getElementById('play').innerText = "Play";
+        } else {
+          document.getElementById('play').innerText = "-" + state + "-";
+          document.getElementById('play').blur();
+        }
+        if (player.isMuted()) {
+          document.getElementById('mute').innerText = "Unmute";
+        } else {
+          document.getElementById('mute').innerText = "Mute";
+        }
       }
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
