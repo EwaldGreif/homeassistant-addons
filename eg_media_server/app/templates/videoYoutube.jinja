@@ -62,6 +62,7 @@
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
         if (player.isMuted()) {
+          document.getElementById("mute").innerText = "---";
           player.mute();
           await wait (2000);
         }
