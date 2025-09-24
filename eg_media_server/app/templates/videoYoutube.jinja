@@ -14,7 +14,7 @@
 <body>
   <h1>Video {{ title }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
-  <button id="start" onclick="start()">Start</button>
+  <button id="start" onclick="start()" autofocus>Start</button>
   <button id="play" onclick="togglePlay()" disabled>---</button>
   <button id="mute" onclick="toggleMute()" disabled>---</button>
   <button id="backward" onclick="backward()" disabled>Backward</button>
@@ -63,7 +63,7 @@
       document.getElementById("backward").disabled = false;
       document.getElementById("forward").disabled = false;
       document.getElementById("number").disabled = false;
-      event.target.unMute();
+      document.getElementById("mute").focus();
     }
 
 	  function togglePlay() {
