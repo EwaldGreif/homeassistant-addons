@@ -55,7 +55,7 @@
       setInterval(updateRuntime, 1000);
     }
 
-	  function togglePlay() {
+	  async function togglePlay() {
       const btn = document.getElementById("play");
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
@@ -124,7 +124,7 @@
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    function wait(ms) {
+    async function wait(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
   </script>
