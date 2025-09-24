@@ -25,6 +25,12 @@
           frameborder="0"></iframe>
 
   <script>
+    const iframe = document.getElementById('youtube-frame');
+    height = 0.8 * window.innerHeight;
+    width = Math.min(window.innerWidth, height * 1.777);
+    iframe.height = height + "px";
+    iframe.width = width + "px";
+
     // This code loads the IFrame Player API code asynchronously.
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -41,7 +47,6 @@
       });
     }
 
-    document.getElementById('play').focus();
     const video = document.getElementById("video");
     video.addEventListener('loadedmetadata', () => {
       document.getElementById('duration').textContent = formatTime(video.duration);
@@ -51,7 +56,7 @@
     });
 
     function onPlayerReady(event) {
-      player.setSize(1280, 720);
+      document.getElementById('play').focus();
       setInterval(updateRuntime, 1000);
     }
 

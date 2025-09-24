@@ -29,5 +29,15 @@
       {% endif %}
     {% endfor %}
   </ul>
+
+  <script>
+    if (document.referrer) {
+      const list = document.getElementById('list');
+      const firstItem = list.querySelector('li > a');
+      if (firstItem) {
+        firstItem.focus();
+      }      
+    }
+  </script>
 </body>
 </html>
