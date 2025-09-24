@@ -68,9 +68,9 @@
         if (player.isMuted()) {
 			    player.playVideo();
         } else {
-          player.unMute();
-			    player.playVideo();
           player.mute();
+			    player.playVideo();
+          player.unMute();
         }
 			  btn.innerText = "Pause";
 		  } else {
