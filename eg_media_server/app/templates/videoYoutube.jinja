@@ -24,6 +24,8 @@
   <iframe id="youtube-frame" width="640" height="390" frameborder="0" tabindex="0" allow="autoplay"></iframe>
 
   <script>
+    var player;
+
     function start() {
       document.getElementById("start").disabled = true;
 
@@ -45,7 +47,6 @@
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
       // This function creates a YouTube player after the API code is loaded.
-      var player;
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-frame', {
           events: {
