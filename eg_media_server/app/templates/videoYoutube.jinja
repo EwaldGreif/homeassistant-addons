@@ -62,14 +62,10 @@
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
         if (player.isMuted()) {
-          player.playVideo();
-        } else {
           player.mute();
           await wait (2000);
-          player.playVideo();
-          await wait (2000);
-          player.unMute();
         }
+        player.playVideo();
       } else if (state == 1) {
         player.pauseVideo();
       }
