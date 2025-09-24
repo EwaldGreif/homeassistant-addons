@@ -14,11 +14,11 @@
 <body>
   <h1>Video {{ title }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
-  <button id="play" onclick="togglePlay()">---</button>
+  <button id="play" onclick="togglePlay()" disabled>---</button>
   Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()">
   <button id="backward" onclick="backward()">Backward</button>
   <button id="forward" onclick="forward()">Forward</button>
-  <button id="mute" onclick="toggleMute()">---</button>
+  <button id="mute" onclick="toggleMute()" disabled>---</button>
   <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
   <iframe id="youtube-frame" width="640" height="390" frameborder="0"></iframe>
 
@@ -32,9 +32,7 @@
     }
     iframe.height = height + "px";
     iframe.width = width + "px";
-    iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0"
-
-    var starting = false;
+    iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0&autoplay=1&mute=1"
 
     // This code loads the IFrame Player API code asynchronously.
     var tag = document.createElement('script');
@@ -53,35 +51,16 @@
     }
 
     function onPlayerReady(event) {
-      document.getElementById('play').focus();
       setInterval(updateRuntime, 1000);
     }
 
-	  async function togglePlay() {
+	  function togglePlay() {
       const btn = document.getElementById("play");
       if (btn.innerText != 'Play' && btn.innerText != 'Pause') return;
       btn.innerText = "---";
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
-        starting = true;
-        if (player.isMuted()) {
-          player.playVideo();
-        } else {
-          document.getElementById("mute").innerText = "---";
-          const startTime = Date.now();
-          player.mute();
-          while (!player.isMuted()) {
-            await wait (250);
-            if (Date.now() - startTime > 2000) break;
-          }
-          player.playVideo();
-          while (player.getPlayerState() != 1 || player.getCurrentTime() <= 10) {
-            await wait (250);
-            if (Date.now() - startTime > 15000) break;
-          }
-          player.unMute();
-        }
-        starting = false;
+        player.playVideo();
       } else if (state == 1) {
         player.pauseVideo();
       }
@@ -115,20 +94,26 @@
     }
 
     function updateRuntime() {
-      if (!starting) {
         const state = player.getPlayerState();
+        const btnPlay = document.getElementById('play');
+        const btnMute = document.getElementById('mute');
+        if (btnPlay.disabled == true && state == 1)
+        {
+          btnPlay.disabled = false;
+          btnMute.disabled = false;
+          bntMute.focus();
+        }
         if (state == 1) {
-          document.getElementById('play').innerText = "Pause";
+          btnPlay.innerText = "Pause";
         } else if (state == 2 || state == 5) {
-          document.getElementById('play').innerText = "Play";
+          btnPlay.innerText = "Play";
         } else {
-          document.getElementById('play').innerText = "-" + state + "-";
-          document.getElementById('play').blur();
+          btnPlay.innerText = "-" + state + "-";
         }
         if (player.isMuted()) {
-          document.getElementById('mute').innerText = "Unmute";
+          btnMute.innerText = "Unmute";
         } else {
-          document.getElementById('mute').innerText = "Mute";
+          btnMute.innerText = "Mute";
         }
       }
       const currentTime = player.getCurrentTime();
@@ -141,10 +126,6 @@
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    async function wait(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
     }
   </script>
 </body>
