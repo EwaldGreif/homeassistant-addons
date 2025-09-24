@@ -45,6 +45,7 @@
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      setInterval(update, 1000);
     }
 
     // This function creates a YouTube player after the API code is loaded.
@@ -57,14 +58,12 @@
     }
 
     function onPlayerReady(event) {
-      alert("Ready");
-      event.target.unMute();
       document.getElementById("play").disabled = false;
       document.getElementById("mute").disabled = false;
       document.getElementById("backward").disabled = false;
       document.getElementById("forward").disabled = false;
       document.getElementById("number").disabled = false;
-      setInterval(update, 1000);
+      event.target.unMute();
     }
 
 	  function togglePlay() {
