@@ -46,12 +46,21 @@
       player = new YT.Player('youtube-frame', {
         events: {
           'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange,
         }
       });
     }
 
     function onPlayerReady(event) {
       setInterval(updateRuntime, 1000);
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        btnPlay.disabled = false;
+        btnMute.disabled = false;
+        bntMute.focus();
+      }
     }
 
 	  function togglePlay() {
@@ -97,25 +106,17 @@
       const state = player.getPlayerState();
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
-      const btnPlay = document.getElementById('play');
-      const btnMute = document.getElementById('mute');
       if (state == 1) {
-        btnPlay.innerText = "Pause";
+        document.getElementById('play').innerText = "Pause";
       } else if (state == 2 || state == 5) {
-        btnPlay.innerText = "Play";
+        document.getElementById('play').innerText = "Play";
       } else {
-        btnPlay.innerText = "-" + state + "-";
+        document.getElementById('play').innerText = "-" + state + "-";
       }
       if (player.isMuted()) {
-        btnMute.innerText = "Unmute";
+        btdocument.getElementById('mute')nMute.innerText = "Unmute";
       } else {
-        btnMute.innerText = "Mute";
-      }
-      if (btnPlay.disabled == true && state == 1)
-      {
-        btnPlay.disabled = false;
-        btnMute.disabled = false;
-        bntMute.focus();
+        document.getElementById('mute').innerText = "Mute";
       }
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
