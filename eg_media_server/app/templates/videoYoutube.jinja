@@ -108,11 +108,11 @@
     function updateRuntime() {
 		  const state = player.getPlayerState();
       if (state == 1) {
-        document.getElementById('state').innerText = "Pause";
+        document.getElementById('play').innerText = "Pause";
       } else if (state == 2 || state == 5) {
-        document.getElementById('state').innerText = "Play";
+        document.getElementById('play').innerText = "Play";
       } else {
-        document.getElementById('state').innerText = "-" + state + "-";
+        document.getElementById('play').innerText = "-" + state + "-";
         document.getElementById('play').blur();
       }
       if (player.isMuted()) {
