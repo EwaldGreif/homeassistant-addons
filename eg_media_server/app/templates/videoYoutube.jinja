@@ -64,6 +64,7 @@
 		  const btn = document.getElementById("play");
 		  const state = player.getPlayerState();
 		  if (state != 1) {
+        xxx("#" + state + " play")";
         if (player.isMuted()) {
 			    player.playVideo();
         } else {
@@ -73,10 +74,10 @@
         }
 			  btn.innerText = "Pause";
 		  } else {
+        xxx("#" + state + " pause")";
 			  player.pauseVideo();
 			  btn.innerText = "Play";
 		  }
-      xxx("#" + state + ">" + player.getPlayerState());
 	  }
 
     function toggleMute() {
