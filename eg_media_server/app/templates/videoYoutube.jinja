@@ -57,6 +57,8 @@
 
 	  async function togglePlay() {
       const btn = document.getElementById("play");
+      if (btn.innerText != 'Play' && btn.innerText != 'Pause') return;
+      btn.innerText = "---";
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
         if (player.isMuted()) {
@@ -65,6 +67,7 @@
           player.mute();
           await wait (2000);
           player.playVideo();
+          await wait (2000);
           player.unMute();
         }
       } else if (state == 1) {
@@ -74,6 +77,8 @@
 
     function toggleMute() {
       const btn = document.getElementById("mute");
+      if (btn.innerText != 'Mute' && btn.innerText != 'Unmute') return;
+      btn.innerText = "---";
       if (player.isMuted()) {
         player.unMute();
       } else {
