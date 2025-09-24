@@ -46,7 +46,6 @@
       player = new YT.Player('youtube-frame', {
         events: {
           'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange,
         }
       });
     }
@@ -106,17 +105,20 @@
       const state = player.getPlayerState();
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
-      if (state == 1) {
-        document.getElementById('play').innerText = "Pause";
-      } else if (state == 2 || state == 5) {
-        document.getElementById('play').innerText = "Play";
-      } else {
-        document.getElementById('play').innerText = "-" + state + "-";
-      }
       if (player.isMuted()) {
         document.getElementById('mute').innerText = "Unmute";
       } else {
         document.getElementById('mute').innerText = "Mute";
+      }
+      if (state == 1) {
+        document.getElementById('play').innerText = "Pause";
+        document.getElementById('play').disabled = false;
+        document.getElementById('mute').disabled = false;
+        document.getElementById('mute').focus();
+      } else if (state == 2 || state == 5) {
+        document.getElementById('play').innerText = "Play";
+      } else {
+        document.getElementById('play').innerText = "-" + state + "-";
       }
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
