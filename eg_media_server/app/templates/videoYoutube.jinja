@@ -94,30 +94,29 @@
     }
 
     function updateRuntime() {
-        const state = player.getPlayerState();
-        const btnPlay = document.getElementById('play');
-        const btnMute = document.getElementById('mute');
-        if (btnPlay.disabled == true && state == 1)
-        {
-          btnPlay.disabled = false;
-          btnMute.disabled = false;
-          bntMute.focus();
-        }
-        if (state == 1) {
-          btnPlay.innerText = "Pause";
-        } else if (state == 2 || state == 5) {
-          btnPlay.innerText = "Play";
-        } else {
-          btnPlay.innerText = "-" + state + "-";
-        }
-        if (player.isMuted()) {
-          btnMute.innerText = "Unmute";
-        } else {
-          btnMute.innerText = "Mute";
-        }
-      }
+      const state = player.getPlayerState();
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
+      const btnPlay = document.getElementById('play');
+      const btnMute = document.getElementById('mute');
+      if (state == 1) {
+        btnPlay.innerText = "Pause";
+      } else if (state == 2 || state == 5) {
+        btnPlay.innerText = "Play";
+      } else {
+        btnPlay.innerText = "-" + state + "-";
+      }
+      if (player.isMuted()) {
+        btnMute.innerText = "Unmute";
+      } else {
+        btnMute.innerText = "Mute";
+      }
+      if (btnPlay.disabled == true && state == 1)
+      {
+        btnPlay.disabled = false;
+        btnMute.disabled = false;
+        bntMute.focus();
+      }
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
     }
