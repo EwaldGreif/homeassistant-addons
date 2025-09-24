@@ -75,7 +75,7 @@
             if (Date.now() - startTime > 2000) break;
           }
           player.playVideo();
-          while (player.getPlayerState() != 1 || player.getCurrentTime() <= 3) {
+          while (player.getPlayerState() != 1 || player.getCurrentTime() <= 5) {
             await wait (250);
             if (Date.now() - startTime > 10000) break;
           }
