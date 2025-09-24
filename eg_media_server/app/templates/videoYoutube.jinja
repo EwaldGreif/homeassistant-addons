@@ -63,18 +63,25 @@
       btn.innerText = "---";
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
+        starting = true;
         if (player.isMuted()) {
           player.playVideo();
         } else {
-          starting = true;
           document.getElementById("mute").innerText = "---";
+          const startTime = Date.now();
           player.mute();
-          await wait (2000);
+          while (!player.isMuted()) {
+            await wait (250);
+            if (Date.now() - startTime > 2000) break;
+          }
           player.playVideo();
-          await wait (5000);
+          while (!player.getPlayerState() != 1 || player.getCurrentTime() < 1) {
+            await wait (250);
+            if (Date.now() - startTime > 10000) break;
+          }
           player.unMute();
-          starting = false;
         }
+        starting = false;
       } else if (state == 1) {
         player.pauseVideo();
       }
