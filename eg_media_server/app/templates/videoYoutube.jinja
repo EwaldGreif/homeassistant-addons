@@ -72,10 +72,14 @@
       const btn = document.getElementById("mute");
       if (btn.innerText != 'Mute' && btn.innerText != 'Unmute') return;
       btn.innerText = "---";
+      const state = player.getPlayerState();
       if (player.isMuted()) {
         player.unMute();
       } else {
         player.mute();
+      }
+      if (state == 1) {
+        player.playVideo();
       }
     }
 	
@@ -108,8 +112,6 @@
         document.getElementById('play').innerText = "Pause";
       } else if (state == 2 || state == 5) {
         document.getElementById('play').innerText = "Play";
-      } else {
-        document.getElementById('play').innerText = "-" + state + "-";
       }
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
