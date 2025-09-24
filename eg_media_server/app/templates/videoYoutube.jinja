@@ -40,6 +40,8 @@
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+    var initialized = false;
+
     // This function creates a YouTube player after the API code is loaded.
     var player;
     function onYouTubeIframeAPIReady() {
@@ -58,14 +60,16 @@
     }
 
     function onPlayerStateChange(event) {
-      if (event.data == YT.PlayerState.PLAYING) {
+      if (!initialized && event.data == YT.PlayerState.PLAYING) {
         document.getElementById("play").disabled = false;
         document.getElementById("mute").disabled = false;
         document.getElementById("backward").disabled = false;
         document.getElementById("forward").disabled = false;
         document.getElementById("number").disabled = false;
-        document.getElementById("mute").focus();
-      }
+        initialized = true;
+        setTimeout(() => { 
+          document.getElementById("mute").focus();
+        }, 2000);
     }
 
 	  function togglePlay() {
