@@ -57,13 +57,15 @@
     }
 
     function onPlayerReady(event) {
+      alert("Ready");
+      setInterval(update, 1000);
       event.target.unMute();
+      alert("Enable buttons");
       document.getElementById("play").disabled = false;
       document.getElementById("mute").disabled = false;
       document.getElementById("backward").disabled = false;
       document.getElementById("forward").disabled = false;
       document.getElementById("number").disabled = false;
-      setInterval(updateRuntime, 1000);
     }
 
 	  function togglePlay() {
@@ -106,7 +108,7 @@
 	    player.seekTo(Math.min(duration, currentTime + 10));
     }
 
-    function updateRuntime() {
+    function update() {
       const state = player.getPlayerState();
       const currentTime = player.getCurrentTime();
       const duration = player.getDuration();
