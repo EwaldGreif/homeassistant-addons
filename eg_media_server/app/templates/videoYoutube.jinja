@@ -14,11 +14,11 @@
 <body>
   <h1>Video {{ title }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
-  <button id="play" onclick="togglePlay()">Play</button>
+  <button id="play" onclick="togglePlay()" disabled>Play</button>
   <button id="mute" onclick="toggleMute()" disabled>Unmute</button>
-  <button id="backward" onclick="backward()">Backward</button>
-  <button id="forward" onclick="forward()">Forward</button>
-  Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()">
+  <button id="backward" onclick="backward()" disabled>Backward</button>
+  <button id="forward" onclick="forward()" disabled>Forward</button>
+  Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()" disabled>
   <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
   <iframe id="youtube-frame" width="640" height="390" frameborder="0"></iframe>
 
@@ -52,7 +52,11 @@
 
     function onPlayerReady(event) {
       setInterval(updateRuntime, 1000);
+      document.getElementById("play").disabled = false;
       document.getElementById("play").focus();
+      document.getElementById("backward").disabled = false;
+      document.getElementById("forward").disabled = false;
+      document.getElementById("number").disabled = false;
     }
 
 	  function togglePlay() {
@@ -72,6 +76,7 @@
       const btn = document.getElementById("mute");
       if (btn.innerText != 'Mute' && btn.innerText != 'Unmute') return;
       btn.innerText = "---";
+      document.getElementById("youtube-frame").focus()
       const state = player.getPlayerState();
       if (player.isMuted()) {
         player.unMute();
@@ -81,6 +86,7 @@
       if (state == 1) {
         player.playVideo();
       }
+      btn.focus();
     }
 	
     function speed() {
