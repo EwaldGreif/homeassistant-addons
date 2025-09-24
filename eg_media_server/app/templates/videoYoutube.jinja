@@ -127,7 +127,8 @@
         document.getElementById("backward").disabled = false;
         document.getElementById("forward").disabled = false;
         document.getElementById("number").disabled = false;
-        document.getElementById("mute").focus();
+        document.body.focus();
+        setTimeout(() => { document.getElementById("mute").focus(); }, 2000);
         initialized = true;
       }
     }
