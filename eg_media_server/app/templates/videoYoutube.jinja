@@ -61,22 +61,22 @@
     }
 
 	  function togglePlay() {
-		  const btn = document.getElementById("play");
-		  const state = player.getPlayerState();
-		  if (state == 2 || state == 5) {
+      const btn = document.getElementById("play");
+      const state = player.getPlayerState();
+      if (state == 2 || state == 5) {
         xxx("#" + state + " play");
         if (player.isMuted()) {
-			    player.playVideo();
+          player.playVideo();
         } else {
           player.mute();
-			    player.playVideo();
+          player.playVideo();
           player.unMute();
         }
-		  } elif (state == 1) {
+      } else if (state == 1) {
         xxx("#" + state + " pause");
-			  player.pauseVideo();
-		  }
-	  }
+        player.pauseVideo();
+      }
+    }
 
     function toggleMute() {
       const btn = document.getElementById("mute");
