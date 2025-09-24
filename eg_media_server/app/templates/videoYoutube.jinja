@@ -121,12 +121,13 @@
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
       if (!initialized && state == 1) {
+        document.getElementById("youtube-frame").blur();
         document.getElementById("play").disabled = false;
         document.getElementById("mute").disabled = false;
         document.getElementById("backward").disabled = false;
         document.getElementById("forward").disabled = false;
         document.getElementById("number").disabled = false;
-        document.getElementById("mute").focus()
+        document.getElementById("mute").focus();
         initialized = true;
       }
     }
