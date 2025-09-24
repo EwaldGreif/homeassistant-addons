@@ -14,8 +14,9 @@
 <body>
   <h1>Video {{ title }}</h1>
   <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
+  <button id="start" onclick="start()">Start</button>
   <button id="play" onclick="togglePlay()" disabled>---</button>
-  <button id="mute" onclick="toggleMute()" tabindex="0" disabled>---</button>
+  <button id="mute" onclick="toggleMute()" disabled>---</button>
   <button id="backward" onclick="backward()" disabled>Backward</button>
   <button id="forward" onclick="forward()" disabled>Forward</button>
   Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()" disabled>
@@ -23,38 +24,44 @@
   <iframe id="youtube-frame" width="640" height="390" frameborder="0" tabindex="0" allow="autoplay"></iframe>
 
   <script>
-    var height = 0.8 * window.innerHeight;
-    var width = height * 1.777;
-    if (width > window.innerWidth) {
-      width = window.innerWidth;
-      height = width / 1.777;
-    }
-    const iframe = document.getElementById('youtube-frame');
-    iframe.height = height + "px";
-    iframe.width = width + "px";
-    iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0&mute=1&autoplay=1&mute=1"
+    function start() {
+      document.getElementById("start").disabled = true;
 
-    // This code loads the IFrame Player API code asynchronously.
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      var height = 0.8 * window.innerHeight;
+      var width = height * 1.777;
+      if (width > window.innerWidth) {
+        width = window.innerWidth;
+        height = width / 1.777;
+      }
+      const iframe = document.getElementById('youtube-frame');
+      iframe.height = height + "px";
+      iframe.width = width + "px";
+      iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0&mute=1&autoplay=1&mute=1"
 
-    var initialized = false;
+      // This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // This function creates a YouTube player after the API code is loaded.
-    var player;
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('youtube-frame', {
-        events: {
-          'onReady': onPlayerReady,
-        }
-      });
+      // This function creates a YouTube player after the API code is loaded.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-frame', {
+          events: {
+            'onReady': onPlayerReady,
+          }
+        });
+      }
     }
 
     function onPlayerReady(event) {
-      document.getElementById("youtube-frame").focus();
-      event.target.mute();
+      event.target.unMute();
+      document.getElementById("play").disabled = false;
+      document.getElementById("mute").disabled = false;
+      document.getElementById("backward").disabled = false;
+      document.getElementById("forward").disabled = false;
+      document.getElementById("number").disabled = false;
       setInterval(updateRuntime, 1000);
     }
 
@@ -65,7 +72,6 @@
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
         player.playVideo();
-        document.getElementById("mute").disabled = false;
       } else if (state == 1) {
         player.pauseVideo();
       }
@@ -76,16 +82,11 @@
       if (btn.innerText != 'Mute' && btn.innerText != 'Unmute') return;
       btn.innerText = "---";
       const state = player.getPlayerState();
-      document.getElementById("youtube-frame").focus();
       if (player.isMuted()) {
         player.unMute();
       } else {
         player.mute();
       }
-      if (state == 1) {
-        player.playVideo();
-      }
-      btn.focus();
     }
 	
     function speed() {
@@ -120,17 +121,6 @@
       }
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
-      if (!initialized && state == 1) {
-        document.getElementById("youtube-frame").blur();
-        document.getElementById("play").disabled = false;
-        document.getElementById("mute").disabled = false;
-        document.getElementById("backward").disabled = false;
-        document.getElementById("forward").disabled = false;
-        document.getElementById("number").disabled = false;
-        document.body.focus();
-        setTimeout(() => { document.getElementById("mute").focus(); }, 2000);
-        initialized = true;
-      }
     }
 	
     function formatTime(seconds) {
