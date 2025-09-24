@@ -19,7 +19,7 @@
   <button id="backward" onclick="backward()">Backward</button>
   <button id="forward" onclick="forward()">Forward</button>
   <button id="mute" onclick="toggleMute()">---</button>
-  <span id="runtime">00:00</span>/<span id="duration">--:--</span><span id="xxx"></span></p>
+  <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
   <iframe id="youtube-frame" width="640" height="390" frameborder="0"></iframe>
 
   <script>
@@ -50,11 +50,6 @@
       });
     }
 
-    function xxx(text) {
-      const span = document.getElementById('xxx');
-      span.textContent += text;
-    }
-
     function onPlayerReady(event) {
       document.getElementById('play').focus();
       setInterval(updateRuntime, 1000);
@@ -64,16 +59,15 @@
       const btn = document.getElementById("play");
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
-        xxx("#" + state + " play");
         if (player.isMuted()) {
           player.playVideo();
         } else {
           player.mute();
+          await wait (2000);
           player.playVideo();
           player.unMute();
         }
       } else if (state == 1) {
-        xxx("#" + state + " pause");
         player.pauseVideo();
       }
     }
@@ -128,6 +122,10 @@
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
   </script>
 </body>
