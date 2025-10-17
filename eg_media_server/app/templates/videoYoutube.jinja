@@ -17,7 +17,7 @@
     <h1>Video {{ title }}</h1>
     <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
     <button id="play" onclick="togglePlay()" autofocus>Play</button>
-    <button id="mute" onclick="toggleMute()" disabled>---</button>
+    <button id="mute" onclick="toggleMute()" disabled>Mute</button>
     <button id="backward" onclick="backward()" disabled>Backward</button>
     <button id="forward" onclick="forward()" disabled>Forward</button>
     Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()" disabled>
@@ -59,13 +59,8 @@
     }
 
 	  function togglePlay() {
-      if (player === undefined) {
-        start();
-        return;
-      }
       const btn = document.getElementById("play");
       if (btn.innerText != 'Play' && btn.innerText != 'Pause') return;
-      btn.innerText = "---";
       const state = player.getPlayerState();
       if (state == 2 || state == 5) {
         player.playVideo();
@@ -77,7 +72,6 @@
     function toggleMute() {
       const btn = document.getElementById("mute");
       if (btn.innerText != 'Mute' && btn.innerText != 'Unmute') return;
-      btn.innerText = "---";
       const state = player.getPlayerState();
       if (player.isMuted()) {
         player.unMute();
