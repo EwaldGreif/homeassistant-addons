@@ -19,7 +19,7 @@
   <h1>{{ dir }}</h1>
 
   {% if parent_dir %}
-    <p><button onclick="history.back()">Eine Ebene zurück</button>
+    <p><button id="back" onclick="history.back()">Eine Ebene zurück</button>
     {% if images > 1 %}
       <button id="startSlideshow" onclick="window.location.href='/slideshow?dir={{ dir }}'">Diashow starten</button>
     {% endif %}</p>
@@ -49,14 +49,17 @@
   <script>
     {% if images > 0 %}
     document.getElementById("startSlideshow").focus();
-    {% endif %}
+    {% else %}
     if (document.referrer) {
       const list = document.getElementById('list');
       const firstItem = list.querySelector('li > a');
       if (firstItem) {
         firstItem.focus();
       }      
+    } else {
+      document.getElementById("back").focus();
     }
+    {% endif %}
   </script>
 </body>
 </html>
