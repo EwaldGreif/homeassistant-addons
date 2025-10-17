@@ -19,7 +19,7 @@
   <h1>{{ file }}</h1>
 
   {% if parent_dir %}
-    <p><button onclick="history.back()">Eine Ebene zurück</button></p>
+    <p><button id="back" onclick="history.back()">Eine Ebene zurück</button></p>
   {% endif %}
 
   <ul id="list">
@@ -37,6 +37,8 @@
       if (firstItem) {
         firstItem.focus();
       }      
+    } else {
+      document.getElementById("back").focus();
     }
   </script>
 </body>
