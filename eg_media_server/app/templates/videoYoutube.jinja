@@ -30,17 +30,15 @@
   </main>
   <script>
     const iframe = document.getElementById('youtube-frame');
-    iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0&autoplay=1&mute=1"
+    iframe.src = "https://www.youtube.com/embed/{{ video }}?enablejsapi=1&controls=0&rel=0&autoplay=0&mute=0"
+
     var player;
 
-    function start() {
-      // This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-      setInterval(update, 1000);
-    }
+    // This code loads the IFrame Player API code asynchronously.
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     // This function creates a YouTube player after the API code is loaded.
     function onYouTubeIframeAPIReady() {
@@ -57,7 +55,7 @@
       document.getElementById("backward").disabled = false;
       document.getElementById("forward").disabled = false;
       document.getElementById("number").disabled = false;
-      document.getElementById("mute").focus();
+      setInterval(update, 1000);
     }
 
 	  function togglePlay() {
