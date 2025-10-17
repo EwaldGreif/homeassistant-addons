@@ -35,6 +35,11 @@
       const hls = new Hls();
       hls.loadSource(videoSource);
       hls.attachMedia(video);
+      video.textTracks.addEventListener('addtrack', () => {
+        for (let i = 0; i < video.textTracks.length; i++) {
+          video.textTracks[i].mode = 'disabled';
+        }
+      });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = videoSource;
     } else {
@@ -46,11 +51,13 @@
     video.addEventListener('timeupdate', () => {
       document.getElementById('runtime').textContent = formatTime(video.currentTime);
     });
+
     function formatTime(seconds) {
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
+
     function togglePlay() {
       const btn = document.getElementById("play");
       if (video.paused) {
@@ -61,6 +68,7 @@
         btn.innerText = "Play"
       }
     }
+
     function toggleMute() {
       const btn = document.getElementById("mute");
       if (video.muted) {
@@ -71,13 +79,16 @@
         btn.innerText = "Unmute"
       }
     }
+
     function speed() {
       const speed = document.getElementById("speed");
       video.playbackRate = parseFloat(speed.value);
     }
+
     function backward() {
       video.currentTime = Math.max(0, video.currentTime - 10);
     }
+
     function forward() {
       video.currentTime = Math.min(video.duration, video.currentTime + 10);
     }

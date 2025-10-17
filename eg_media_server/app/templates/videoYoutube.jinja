@@ -4,24 +4,28 @@
   <meta charset="UTF-8">
   <title>Video {{ title }}</title>
   <style>
-    html, body { margin: 0px; padding: 0px; height: 100%; overflow: hidden; }
-    body { font-family: sans-serif; text-align: center; }
+    html, body { margin: 0px; padding: 0px; height: 100vh; overflow: hidden; }
+    body { font-family: sans-serif; text-align: center; display: flex; flex-direction: column; align-items: center; }
+	  main { flex: 1; overflow: hidden; }
     h1 { font-size: 1em; margin: 0px; }
     p { margin: 2px; }
-    video { width: 100%; max-height: 80vh; aspect-ratio: 16 / 9; margin: 0px auto; display: block; object-fit: contain; }
+    video { width: 100%; height: 100%; }
   </style>
 </head>
 <body>
-  <h1>Video {{ title }}</h1>
-  <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
-  <button id="play" onclick="togglePlay()" autofocus>Play</button>
-  <button id="mute" onclick="toggleMute()" disabled>---</button>
-  <button id="backward" onclick="backward()" disabled>Backward</button>
-  <button id="forward" onclick="forward()" disabled>Forward</button>
-  Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()" disabled>
-  <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
-  <iframe id="youtube-frame" width="640" height="390" frameborder="0" tabindex="0" allow="autoplay"></iframe>
-
+  <header>
+    <h1>Video {{ title }}</h1>
+    <p><button onclick="history.back()">Zurück zum Verzeichnis</button>
+    <button id="play" onclick="togglePlay()" autofocus>Play</button>
+    <button id="mute" onclick="toggleMute()" disabled>---</button>
+    <button id="backward" onclick="backward()" disabled>Backward</button>
+    <button id="forward" onclick="forward()" disabled>Forward</button>
+    Speed <input type="number" id="speed" value="1" min="0.5" max="2" step="0.5" onchange="speed()" disabled>
+    <span id="runtime">00:00</span>/<span id="duration">--:--</span></p>
+  </header>
+  <main>
+    <iframe id="youtube-frame" width="100%" height="100%" frameborder="0" tabindex="0" allow="autoplay"></iframe>
+  </main>
   <script>
     var player;
 

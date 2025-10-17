@@ -74,7 +74,7 @@ def video():
     href = request.args.get("href")
     title = href
     if len(title) > 70:
-        title = title[:25] + "..." + title[-20:]
+        title = title[:35] + "..." + title[-30:]
     mime_type, _ = mimetypes.guess_type(href)
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('video/'):
