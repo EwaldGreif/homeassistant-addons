@@ -50,14 +50,15 @@
     {% if images > 0 %}
     document.getElementById("startSlideshow").focus();
     {% else %}
-    if (document.referrer) {
+    const back = document.getElementById('back');
+    if (document.referrer || !back) {
       const list = document.getElementById('list');
       const firstItem = list.querySelector('li > a');
       if (firstItem) {
         firstItem.focus();
       }      
     } else {
-      document.getElementById("back").focus();
+      back.focus();
     }
     {% endif %}
   </script>
