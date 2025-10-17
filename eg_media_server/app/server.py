@@ -73,7 +73,7 @@ def serve(req_path):
 def video():
     href = request.args.get("href")
     title = href
-    if len(title) > 50:
+    if len(title) > 70:
         title = title[:25] + "..." + title[-20:]
     mime_type, _ = mimetypes.guess_type(href)
     mime_type = mime_type or 'application/octet-stream'
