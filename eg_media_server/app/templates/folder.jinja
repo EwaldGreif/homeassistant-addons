@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Verzeichnis {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: auto; }
+    body { font-family: sans-serif; padding-left: 10px; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    a:focus { outline: 3px solid orange; background-color: #222; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>{{title}}</h1>
+  {% if title != "/" %}
+    <p>
+    <button id="back" onclick="goBack()">Eine Ebene zurück</button>
+    {% if imageCount > 0 %}
+      <button id="startSlideshow" onclick="window.location.href='/slideshow?path={{path}}'">Diashow</button>
+    {% endif %}
+    {% if audioCount > 0 %}
+      <button id="startAlbum" onclick="window.location.href='/album?path={{path}}'">Audio-Album</button>
+    {% endif %}
+    </p>
+  {% endif %}
+  <ul id="list">
+    {% if imageCount == 1 %}
+      <li>1 Bild</li>
+    {% elif imageCount > 1 %}
+      <li>{{imageCount}} Bilder</li>
+    {% endif %}
+    {% if audioCount == 1 %}
+      <li>1 Audiodatei</li>
+    {% elif audioCount > 1 %}
+      <li>{{audioCount}} Audiodateien</li>
+    {% endif %}
+    {% for name, medium, url in entries %}
+      {% if medium == "folder" %}
+        <li><a href="/folder?path={{url}}">{{name}}</a></li>
+      {% elif medium == "image" %}
+        <li><a href="/image?path={{url}}">{{name}}</a></li>
+      {% elif medium == "video" or medium == "videostream" %}
+        <li><a href="/video?path={{url}}">{{name}}</a></li>
+      {% elif medium == "audio" or medium == "audiostream" %}
+        <li><a href="/audio?path={{url}}">{{name}}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+  <script>
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+    document.addEventListener('keydown', (event) => { keyDown(event); });
+
+    const focus = new URLSearchParams(window.location.search).get('focus');
+    if (focus) {
+      const links = document.querySelectorAll('li > a');
+      for (const link of links) {
+        if (link.textContent == focus) {
+          link.focus();
+          link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          break;
+        }
+      }
+    } else {
+      {% if imageCount > 0 %}
+        document.getElementById('startSlideshow').focus();
+      {% elif audioCount > 0 %}
+        document.getElementById('startAlbum').focus();
+      {% else %}
+        const back = document.getElementById('back');
+        const firstItem = list.querySelector('li > a');
+        if (firstItem) {
+          firstItem.focus();
+        } else if (back) {
+          back.focus();
+        }
+      {% endif %}
+    }
+
+    function goBack() {
+      const path = new URLSearchParams(window.location.search).get('path');
+      const fields = path.split('/').filter(Boolean);
+      const focus = fields.pop();
+      const newPath = '/' + fields.join('/');
+      const url = new URL('/folder', window.location.origin);
+      url.searchParams.set('path', newPath);
+      url.searchParams.set('focus', focus);
+      window.location.href = url.toString().replace(/%2F/g, "/").replace(/\+/g, "%20");
+    }
+
+    function adjustHeight() {
+      const h = window.innerHeight;
+      document.body.style.height = h + "px";
+    }
+
+    function keyDown(event) {
+        if (event.key == 'ArrowLeft') {
+          const active = document.activeElement;
+          if (active && document.getElementById("list").contains(active)) {
+            document.getElementById("back").focus();
+          }
+        }
+    }
+  </script>
+</body>
+</html>

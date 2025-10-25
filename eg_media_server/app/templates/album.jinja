@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Album {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { font-family: sans-serif; }
+    header { text-align: center; }
+	  main { display: flex; justify-content: center; align-items: flex-start; gap: 20px; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    ul { list-style-type: none; margin: 10px 0 0 0; padding: 0; }
+    img { margin-top: 10px; height: 250px; width: auto; }
+    button:focus { background-color: #00ffff; }
+    .left-column { flex-shrink: 0; max-width: 45%; display: flex; justify-content: flex-end; }
+    .right-column { flex-shrink: 0; max-width: 45%; text-align: left; }
+    #darkOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: none; z-index: 9999; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="previous" onclick="prevAudio()">Vorheriger Titel</button>
+      <span id="current">--</span> von <span id="total">--</span>
+      <button id="next" onclick="nextAudio()">Nächster Titel</button>
+      <button id="play" onclick="togglePlay()">Abspielen</button>
+      <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
+      <button id="full" onclick="setFullScreen()">Dunkelbild</button>
+    </p>
+  </header>
+  <main>
+    <div class="left-column">
+      <img>
+    </div>
+    <div class="right-column">
+      <audio id="audio"></audio>
+      <ul>
+      {% for title, file, url in audios %}
+        <li>{{title}}</li>
+      {% endfor %}
+      </ul>
+    <div>
+  </main>
+  <div id="darkOverlay"></div>
+  <script>
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+    document.addEventListener('fullscreenchange', fullScreenChanged);
+    document.addEventListener('keydown', (event) => { keyDown(event); });
+    
+    const audio = document.getElementById("audio");
+      audio.addEventListener('loadedmetadata', () => {
+      document.getElementById('duration').textContent = formatTime(audio.duration);
+    });
+    audio.addEventListener('timeupdate', () => {
+      document.getElementById('runtime').textContent = formatTime(audio.currentTime);
+      if (audio.ended) {
+        nextAudio();
+        audio.play();
+      }
+    });
+
+    const audios = JSON.parse('{{audios|tojson|safe}}');
+    let current = 0;
+    if (audios.length > 0) {
+      showAudio(0);
+    }
+    document.querySelector('img').src = "/file?path={{cover}}";
+    document.getElementById('play').focus();
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function showAudio(index) {
+      current = (index + audios.length) % audios.length;
+      const listItems = document.querySelectorAll('li');
+      listItems.forEach((li, index) => {
+        if (index === current) {
+          li.style.fontWeight = 'bold';
+        } else {
+          li.style.fontWeight = 'normal';
+        }
+      });
+      document.getElementById("audio").src = "/file?path=" + audios[current][2];
+      document.getElementById("current").textContent = `${current + 1}`;
+      document.getElementById("total").textContent = `${audios.length}`;
+    }
+
+    function togglePlay() {
+      const btn = document.getElementById("play");
+      if (audio.paused) {
+        audio.play();
+        btn.innerText = "Anhalten"
+      } else {
+        audio.pause();
+        btn.innerText = "Abspielen"
+      }
+      btn.focus();
+    }
+
+    function nextAudio() {
+      showAudio(current + 1);
+      document.getElementById("next").focus();
+      if (document.getElementById("play").innerText === "Anhalten") {
+        audio.play();
+      }
+    }
+
+    function prevAudio() {
+      showAudio(current - 1);
+      document.getElementById("previous").focus();
+      if (document.getElementById("play").innerText === "Anhalten") {
+        audio.play();
+      }
+    }
+
+    function setFullScreen() {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.documentElement.webkitRequestFullscreen();
+      } 
+    }
+
+    function exit() {
+      const path = new URLSearchParams(window.location.search).get('path');
+      const url = new URL('/folder', window.location.origin);
+      url.searchParams.set('path', path);
+      window.location.href = url.toString().replace(/%2F/g, "/").replace(/\+/g, "%20");
+    }
+
+    function adjustHeight() {
+      const h = window.innerHeight;
+      document.body.style.height = h + "px";
+    }
+
+    function keyDown(event) {
+      if (document.fullscreenElement) {
+        event.preventDefault();
+        if (event.key === 'ArrowRight') {
+          nextAudio();
+        } else if (event.key === 'ArrowLeft') {
+          prevAudio();
+        }
+      } else {
+        if (event.key == 'ArrowUp') {
+          document.getElementById("full").focus();
+        } else if (event.key == 'ArrowDown') {
+          document.getElementById("exit").focus();
+        }
+      }
+    }
+
+    function fullScreenChanged() {
+      if (document.fullscreenElement) {
+        document.getElementById('darkOverlay').style.display = 'block';
+      } else {
+        document.getElementById('darkOverlay').style.display = 'none';
+        document.getElementById('full').focus();
+      }
+    }
+  </script>
+</body>
+</html>

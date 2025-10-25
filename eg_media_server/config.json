@@ -1,0 +1,18 @@
+{
+  "name": "EG Media Server",
+  "version": "1.0.1",
+  "slug": "eg_media_server",
+  "description": "Ein minimaler Flask basierter Medien-Server aus /media",
+  "arch": ["amd64", "armv7", "armhf", "aarch64"],
+  "startup": "services",
+  "boot": "auto",
+  "ports": {
+    "8090/tcp": 8090
+  },
+  "options": {},
+  "schema": {},
+  "map": [
+    "media:ro"
+  ],
+  "webui": "http://[HOST]:[PORT:8090]/"
+}
