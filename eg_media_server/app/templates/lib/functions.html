@@ -1,0 +1,167 @@
+{# functions.html #}
+
+<script>
+  let _player = null;
+  let _darkKeyDown = null;
+  const _navigation = [];
+
+  function init() {
+    window.addEventListener('load', adjustHeight);
+    window.addEventListener('resize', adjustHeight);
+    document.addEventListener('fullscreenchange', fullScreenChanged);
+    document.addEventListener('keydown', (event) => { keyDown(event); });
+  }
+
+  function initPlayer(player) {
+    _player = document.getElementById(player);
+    _player.addEventListener('loadedmetadata', () => {
+      document.getElementById('duration').textContent = formatTime(_player.duration);
+    });
+    _player.addEventListener('timeupdate', () => {
+      document.getElementById('runtime').textContent = formatTime(_player.currentTime);
+    });
+    return _player;
+  }
+
+  function initDarkKeyDown(onKeyDown) {
+    _darkKeyDown = onKeyDown;
+  }
+
+  function addNavigation(object) {
+    _navigation[_navigation.length] = document.getElementById(object);
+  }
+
+  function focus(object) {
+    let obj = document.getElementById(object);
+    if (obj) obj.focus();
+  }
+
+  function togglePlay() {
+    const btn = document.getElementById('play');
+    if (_player.paused) {
+      _player.play();
+      btn.innerText = 'Anhalten';
+    } else {
+      _player.pause();
+      btn.innerText = 'Abspielen';
+    }
+    btn.focus();
+  }
+
+  function backward() {
+    if (_player === null) return;
+    _player.currentTime = Math.max(0, _player.currentTime - 10);
+    focus('backward');
+  }
+
+  function forward() {
+    if (_player === null) return;
+    _player.currentTime = Math.min(_player.duration, _player.currentTime + 10);
+    focus('forward');
+  }
+
+  function exit() {
+    const url = new URL('/folder', window.location.origin);
+    url.searchParams.set('path', '{{folder}}');
+    url.searchParams.set('focus', '{{file}}');
+    window.location.href = url.toString().replace(/%2F/g, '/').replace(/\+/g, '%20');
+  }
+
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+
+  function adjustHeight() {
+    const h = window.innerHeight;
+    document.body.style.height = h + 'px';
+  }
+
+  function setFullScreen() {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.documentElement.webkitRequestFullscreen();
+    } 
+  }
+
+  function fullScreenChanged() {
+    const overlay = document.getElementById('darkOverlay');
+    const header = document.querySelector('header');
+    if (document.fullscreenElement) {
+      if (overlay) overlay.style.display = 'block';
+      else header.style.display = 'none';
+    } else {
+      if (overlay) overlay.style.display = 'none';
+      else header.style.display = 'block';
+      document.getElementById('full').focus();
+    }
+  }
+
+  function navigateLeft() {
+    const index = _navigation.indexOf(document.activeElement);
+    navigateIndex(index - 1);
+  }
+
+  function navigateRight() {
+    const index = _navigation.indexOf(document.activeElement);
+    navigateIndex(index + 1);
+  }
+
+  function navigateIndex(index) {
+    if (_navigation.length < 1) return;
+    if (index <= 0) _navigation[0].focus();
+    else if (index >= _navigation.length) _navigation[_navigation.length - 1].focus();
+    else _navigation[index].focus();
+  }
+
+  function keyDown(event) {
+    if (document.fullscreenElement) {
+      event.preventDefault();
+      if (_darkKeyDown) {
+        _darkKeyDown(event);
+      } else {
+        if (event.key === 'ArrowRight') {
+          forward();
+        } else if (event.key === 'ArrowLeft') {
+          backward();
+        }
+      }
+    } else {
+      const active = document.activeElement;
+      const list = document.getElementById('list');
+      if (list) {
+        const items = list.querySelectorAll('li > a');
+        const index = Array.from(items).indexOf(active);
+        if (list.contains(active)) {
+          if (event.key == 'ArrowLeft') {
+            navigateIndex(0);
+          } else if (event.key == 'ArrowUp') {
+            const newIndex = index - 1;
+            if (newIndex >= 0) items[newIndex].focus();
+            else navigateIndex(0);
+          } else if (event.key == 'ArrowDown') {
+            const newIndex = Math.min(items.length - 1, index + 1);
+            items[newIndex].focus();
+          }
+        } else {
+          if (event.key == 'ArrowDown' && items.length > 0) items[0].focus();
+          else if (event.key === 'ArrowLeft') navigateLeft();
+          else if (event.key === 'ArrowRight') navigateRight();
+        }
+      } else {
+        if (event.key === 'ArrowUp') {
+          if (active && active.type === 'number') active.value = Math.min(10, Number(active.value) + 1);
+          else navigateIndex(_navigation.length);
+        }
+        else if (event.key === 'ArrowDown') {
+          if (active && active.type === 'number') active.value = Math.max(3, Number(active.value) - 1);
+          else navigateIndex(0);
+        }
+        else if (event.key === 'ArrowLeft') navigateLeft();
+        else if (event.key === 'ArrowRight') navigateRight();
+      }
+    }
+  }
+</script>

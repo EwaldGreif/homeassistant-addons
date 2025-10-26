@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Album {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { font-family: sans-serif; }
+    header { text-align: center; }
+	  main { display: flex; justify-content: center; align-items: flex-start; gap: 20px; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    ul { list-style-type: none; margin: 10px 0 0 0; padding: 0; }
+    img { margin-top: 10px; height: 250px; width: auto; }
+    button:focus { background-color: #00ffff; }
+    .left-column { flex-shrink: 0; max-width: 45%; display: flex; justify-content: flex-end; }
+    .right-column { flex-shrink: 0; max-width: 45%; text-align: left; }
+    #darkOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: none; z-index: 9999; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="previous" onclick="prevAudio()">Vorheriger Titel</button>
+      <span id="current">--</span> von <span id="total">--</span>
+      <button id="next" onclick="nextAudio()">Nächster Titel</button>
+      <button id="play" onclick="togglePlay()">Abspielen</button>
+      <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
+      <button id="full" onclick="setFullScreen()">Dunkelbild</button>
+    </p>
+  </header>
+  <main>
+    <div class="left-column">
+      <img>
+    </div>
+    <div class="right-column">
+      <audio id="audio"></audio>
+      <ul>
+        {% for title, file, url in audios %}
+          <li>{{title}}</li>
+        {% endfor %}
+      </ul>
+    <div>
+  </main>
+  <div id="darkOverlay"></div>
+
+  {% include "lib/functions.html" %}
+
+  <script>
+    init();
+    let player = initPlayer('audio');
+    initDarkKeyDown(darkKeyDown);
+    addNavigation('exit');
+    addNavigation('previous');
+    addNavigation('next');
+    addNavigation('play');
+    addNavigation('full');
+    focus('play');
+
+    player.addEventListener('timeupdate', () => {
+      if (player.ended) {
+        nextAudio();
+        audio.play();
+      }
+    });
+
+    document.querySelector('img').src = '/file?path={{cover}}';
+    const audios = JSON.parse('{{audios|tojson|safe}}');
+    let current = 0;
+    if (audios.length > 0) {
+      showAudio(0);
+    }
+
+    function showAudio(index) {
+      current = (index + audios.length) % audios.length;
+      const listItems = document.querySelectorAll('li');
+      listItems.forEach((li, index) => {
+        if (index === current) {
+          li.style.fontWeight = 'bold';
+        } else {
+          li.style.fontWeight = 'normal';
+        }
+      });
+      document.getElementById('audio').src = '/file?path=' + audios[current][2];
+      document.getElementById('current').textContent = `${current + 1}`;
+      document.getElementById('total').textContent = `${audios.length}`;
+    }
+
+    function nextAudio() {
+      showAudio(current + 1);
+      focus('next');
+      if (document.getElementById('play').innerText === 'Anhalten') {
+        audio.play();
+      }
+    }
+
+    function prevAudio() {
+      showAudio(current - 1);
+      focus('previous');
+      if (document.getElementById('play').innerText === 'Anhalten') {
+        audio.play();
+      }
+    }
+
+    function darkKeyDown(event) {
+      if (event.key === 'ArrowRight') {
+        nextAudio();
+      } else if (event.key === 'ArrowLeft') {
+        prevAudio();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -47,27 +47,34 @@
       {% endif %}
     {% endfor %}
   </ul>
-  <script>
-    window.addEventListener("load", adjustHeight);
-    window.addEventListener("resize", adjustHeight);
-    document.addEventListener('keydown', (event) => { keyDown(event); });
 
-    const focus = new URLSearchParams(window.location.search).get('focus');
-    if (focus) {
+  {% include "lib/functions.html" %}
+
+  <script>
+    const imageCount = "{{imageCount}}";
+    const audioCount = "{{audioCount}}";
+    init();
+    if (document.getElementById('back')) addNavigation('back');
+    if (imageCount > 0) addNavigation('startSlideshow');
+    if (audioCount > 0) addNavigation('startAlbum');
+
+    const focusLink = new URLSearchParams(window.location.search).get('focus');
+    if (focusLink) {
       const links = document.querySelectorAll('li > a');
       for (const link of links) {
-        if (link.textContent == focus) {
+        if (link.textContent == focusLink) {
           link.focus();
           link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          found = true;
           break;
         }
       }
     } else {
-      {% if imageCount > 0 %}
+      if (imageCount > 0) {
         document.getElementById('startSlideshow').focus();
-      {% elif audioCount > 0 %}
+      } else if (audioCount > 0) {
         document.getElementById('startAlbum').focus();
-      {% else %}
+      } else {
         const back = document.getElementById('back');
         const firstItem = list.querySelector('li > a');
         if (firstItem) {
@@ -75,7 +82,7 @@
         } else if (back) {
           back.focus();
         }
-      {% endif %}
+      }
     }
 
     function goBack() {
@@ -87,20 +94,6 @@
       url.searchParams.set('path', newPath);
       url.searchParams.set('focus', focus);
       window.location.href = url.toString().replace(/%2F/g, "/").replace(/\+/g, "%20");
-    }
-
-    function adjustHeight() {
-      const h = window.innerHeight;
-      document.body.style.height = h + "px";
-    }
-
-    function keyDown(event) {
-        if (event.key == 'ArrowLeft') {
-          const active = document.activeElement;
-          if (active && document.getElementById("list").contains(active)) {
-            document.getElementById("back").focus();
-          }
-        }
     }
   </script>
 </body>

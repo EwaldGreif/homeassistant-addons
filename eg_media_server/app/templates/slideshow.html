@@ -23,26 +23,33 @@
       <span id="current">--</span> von <span id="total">--</span>
       <button id="next" onclick="nextImage()">Nächstes Bild</button>
       <button id="autoplay" onclick="toggleAutoplay()">Diashow starten</button>
-      <input type="number" id="speed" value="3" min="1" max="10" step="1" onchange="speed()"> s
+      <input type="number" id="speed" value="3" min="1" max="10" step="1" onchange="speed()" readonly> s
       <button id="full" onclick="setFullScreen()">Vollbild</button>
     </p>
   </header>
   <main>
     <img id="foto">
   </main>
+
+  {% include "lib/functions.html" %}
+
   <script>
-    window.addEventListener("load", adjustHeight);
-    window.addEventListener("resize", adjustHeight);
-    document.addEventListener('fullscreenchange', fullScreenChanged);
-    document.addEventListener('keydown', (event) => { keyDown(event); });
-    
+    init();
+    initDarkKeyDown(darkKeyDown);
+    addNavigation('exit');
+    addNavigation('previous');
+    addNavigation('next');
+    addNavigation('autoplay');
+    addNavigation('speed');
+    addNavigation('full');
+    focus('next');
+
     const images = JSON.parse('{{images|tojson|safe}}');
     let current = 0;
     let autoplay = null;
     if (images.length > 0) {
       showImage(0);
     }
-    document.getElementById('next').focus();
 
     function showImage(index) {
       current = (index + images.length) % images.length;
@@ -54,83 +61,45 @@
     function nextImage() {
       showImage(current + 1);
       if (autoplay === null) {
-        document.getElementById("next").focus();
+        focus('next');
       }
     }
 
     function prevImage() {
       showImage(current - 1);
       if (autoplay === null) {
-        document.getElementById("previous").focus();
+        focus("previous");
       }
     }
 
     function toggleAutoplay() {
-      const btn = document.getElementById("autoplay");
+      const btn = document.getElementById('autoplay');
       if (autoplay) {
         clearInterval(autoplay);
         autoplay = null;
-        btn.innerText = "Diashow starten";
+        btn.innerText = 'Diashow starten';
       } else {
-        const speed = document.getElementById("speed");
+        const speed = document.getElementById('speed');
         autoplay = setInterval(nextImage, parseInt(speed.value, 10) * 1000);
-        btn.innerText = "Diashow stoppen";
+        btn.innerText = 'Diashow stoppen';
       }
       btn.focus();
     }
 
     function speed() {
       if (autoplay) {
-        const speed = document.getElementById("speed");
+        const speed = document.getElementById('speed');
         clearInterval(autoplay);
         autoplay = setInterval(nextImage, parseInt(speed.value, 10) * 1000);
         speed.focus();
       }
     }
 
-    function setFullScreen() {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.documentElement.webkitRequestFullscreen();
-      } 
-    }
-
-    function exit() {
-      const path = new URLSearchParams(window.location.search).get('path');
-      const url = new URL('/folder', window.location.origin);
-      url.searchParams.set('path', path);
-      window.location.href = url.toString().replace(/%2F/g, "/").replace(/\+/g, "%20");
-    }
-
-    function adjustHeight() {
-      const h = window.innerHeight;
-      document.body.style.height = h + "px";
-    }
-
-    function keyDown(event) {
-      if (document.fullscreenElement) {
-        event.preventDefault();
-        if (event.key === 'ArrowRight') {
-          nextImage();
-        } else if (event.key === 'ArrowLeft') {
-          prevImage();
-        }
-      } else {
-        if (event.key == 'ArrowUp') {
-          document.getElementById("full").focus();
-        } else if (event.key == 'ArrowDown') {
-          document.getElementById("exit").focus();
-        }
-      }
-    }
-
-    function fullScreenChanged() {
-      if (document.fullscreenElement) {
-        document.querySelector('header').style.display = 'none';
-      } else {
-        document.querySelector('header').style.display = 'block';
-        document.getElementById('full').focus();
+    function darkKeyDown(event) {
+      if (event.key === 'ArrowRight') {
+        nextImage();
+      } else if (event.key === 'ArrowLeft') {
+        prevImage();
       }
     }
   </script>

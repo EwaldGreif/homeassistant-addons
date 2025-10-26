@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { font-family: sans-serif; text-align: center; display: flex; flex-direction: column; align-items: center; }
+	  main { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    #audio {
+      pointer-events: none; /* verhindert Interaktion */
+      opacity: 0.6;         /* optional: visuell "disabled" */
+    }
+    button:focus { background-color: #00ffff; }
+    #darkOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: none; z-index: 9999; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="play" onclick="togglePlay()">Abspielen</button>
+      <button id="backward" onclick="backward()">Zurück</button>
+      <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
+      <button id="forward" onclick="forward()">Vorwärts</button>
+      <button id="full" onclick="setFullScreen()">Dunkelbild</button>
+    </p>
+  </header>
+  <main>
+    <audio id="audio">
+    {% if source.startswith('http') %}
+      <source src="{{source}}" type="{{mime}}">
+    {% else %}
+      <source src="/file?path={{source}}" type="{{mime}}">
+    {% endif %}
+    </audio>
+  </main>
+  <div id="darkOverlay"></div>
+
+  {% include "lib/functions.html" %}
+
+  <script>
+    init();
+    initPlayer('audio');
+    addNavigation('exit');
+    addNavigation('play');
+    addNavigation('backward');
+    addNavigation('forward');
+    addNavigation('full');
+    focus('play');
+  </script>
+</body>
+</html>

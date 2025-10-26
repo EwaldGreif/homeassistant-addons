@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Video {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    main { display: flex; flex: 1; align-items: center; overflow: hidden; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    button:focus { background-color: #00ffff; }
+    .video-wrapper { height: 100%; max-width: 100%; max-height: 100%; aspect-ratio: 16 / 9; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="play" onclick="youtubeTogglePlay()">Abspielen</button>
+      <button id="backward" onclick="youtubeBackward()">Rückspulen</button>
+      <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
+      <button id="forward" onclick="youtubeForward()">Vorspulen</button>
+      <button id="full" onclick="setFullScreen()">Vollbild</button>
+    </p>
+  </header>
+  <main>
+    <div class="video-wrapper">
+      <iframe id="youtube-frame" frameborder="0" allow="autoplay; encrypted-media" style="width: 100%; height: 100%;"></iframe>
+    </div>
+  </main>
+
+  {% include "lib/functions.html" %}
+
+  <script>
+    init(null);
+    initDarkKeyDown(darkKeyDown);
+    addNavigation('exit');
+    addNavigation('play');
+    addNavigation('backward');
+    addNavigation('forward');
+    addNavigation('full');
+    focus('play');
+
+    const iframe = document.getElementById('youtube-frame');
+    iframe.src = "https://www.youtube.com/embed/{{video}}?enablejsapi=1&controls=0&rel=0&autoplay=0&mute=0"
+
+    let youtubePlayer;
+
+    // This code loads the IFrame Player API code asynchronously.
+    let tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    let firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // This function creates a YouTube player after the API code is loaded.
+    function onYouTubeIframeAPIReady() {
+      youtubePlayer = new YT.Player('youtube-frame', {
+        events: {
+          'onReady': onPlayerReady,
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      document.getElementById("play").disabled = false;
+      document.getElementById("backward").disabled = false;
+      document.getElementById("forward").disabled = false;
+      setInterval(update, 1000);
+    }
+
+    function update() {
+      const state = youtubePlayer.getPlayerState();
+      const currentTime = youtubePlayer.getCurrentTime();
+      const duration = youtubePlayer.getDuration();
+      if (state == 1) {
+        document.getElementById('play').innerText = "Anhalten";
+      } else if (state == 2 || state == 5) {
+        document.getElementById('play').innerText = "Abspielen";
+      }
+      document.getElementById('runtime').textContent = formatTime(currentTime);
+      document.getElementById('duration').textContent = formatTime(duration);
+    }
+
+    function youtubeTogglePlay() {
+      const btn = document.getElementById("play");
+      const state = youtubePlayer.getPlayerState();
+      if (state == 2 || state == 5) {
+        youtubePlayer.playVideo();
+      } else if (state == 1) {
+        youtubePlayer.pauseVideo();
+      }
+      btn.focus();
+    }
+
+    function youtubeBackward() {
+      const currentTime = youtubePlayer.getCurrentTime();
+      youtubePlayer.seekTo(Math.max(0, currentTime - 10));
+      focus("backward");
+    }
+
+    function youtubeForward() {
+      const currentTime = youtubePlayer.getCurrentTime();
+      const duration = youtubePlayer.getDuration();
+      youtubePlayer.seekTo(Math.min(duration, currentTime + 10));
+      focus("forward");
+    }
+
+    function darkKeyDown(event) {
+      if (event.key === 'ArrowRight') {
+        youtubeForward();
+      } else if (event.key === 'ArrowLeft') {
+        youtubeBackward();
+      }
+    }
+  </script>
+</body>
+</html>

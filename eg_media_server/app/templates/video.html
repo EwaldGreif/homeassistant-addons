@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Video {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    main { display: flex; flex: 1; align-items: center; overflow: hidden; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    button:focus { background-color: #00ffff; }
+    video { height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="play" onclick="togglePlay()">Abspielen</button>
+      <button id="backward" onclick="backward()">Rückspulen</button>
+      <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
+      <button id="forward" onclick="forward()">Vorspulen</button>
+      <button id="full" onclick="setFullScreen()">Vollbild</button>
+    </p>
+  </header>
+  <main>
+    <video id="video">
+      <source src="/file?path={{source}}" type="{{mime}}">
+    </video>
+  </main>
+
+  {% include "lib/functions.html" %}
+
+  <script>
+    init();
+    initPlayer('video');
+    addNavigation('exit');
+    addNavigation('play');
+    addNavigation('backward');
+    addNavigation('forward');
+    addNavigation('full');
+    focus('play');
+  </script>
+</body>
+</html>

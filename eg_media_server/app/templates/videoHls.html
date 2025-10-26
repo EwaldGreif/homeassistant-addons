@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Video {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    main { display: flex; flex: 1; align-items: center; overflow: hidden; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    button:focus { background-color: #00ffff; }
+    video { height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="play" onclick="togglePlay()">Abspielen</button>
+      <button id="backward" onclick="backward()">Rückspulen</button>
+      <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
+      <button id="forward" onclick="forward()">Vorspulen</button>
+      <button id="full" onclick="setFullScreen()">Vollbild</button>
+    </p>
+  </header>
+  <main>
+    <video id="video"></video>
+  </main>
+
+  {% include "lib/functions.html" %}
+
+  <script>
+    init();
+    initPlayer('video');
+    addNavigation('exit');
+    addNavigation('play');
+    addNavigation('backward');
+    addNavigation('forward');
+    addNavigation('full');
+    focus('play');
+
+    const videoSource = "{{source}}";
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSource);
+      hls.attachMedia(video);
+      video.textTracks.addEventListener('addtrack', () => {
+        for (let i = 0; i < video.textTracks.length; i++) {
+          video.textTracks[i].mode = 'disabled';
+        }
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = videoSource;
+    }
+  </script>
+</body>
+</html>

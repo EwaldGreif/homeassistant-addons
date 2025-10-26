@@ -43,20 +43,16 @@ def folder():
             elif file.endswith(IMAGE_EXTENSIONS):
                 medium = "image"
                 imageCount += 1
-                if imageCount > 10:
-                    continue
             elif file.endswith(VIDEO_EXTENSIONS):
                 medium = "video"
             elif file.endswith(AUDIO_EXTENSIONS):
                 medium = "audio"
                 audioCount += 1
-                if audioCount > 10:
-                    continue
             else:
                 medium = "file"
         entries.append((file, medium, url))
     path = quote(dir)
-    return render_template("folder.jinja", title=dir, path=path, entries=entries, imageCount=imageCount, audioCount=audioCount, focus=focus)
+    return render_template("folder.html", title=dir, path=path, entries=entries, imageCount=imageCount, audioCount=audioCount, focus=focus)
 
 @app.route("/file")
 def file():
@@ -69,55 +65,52 @@ def file():
 
 @app.route("/slideshow")
 def slideshow():
-    dir = unquote(request.args.get("path", "/"))
-    dir_path = os.path.join(MEDIA_DIR, dir.lstrip('/'))
-    if not os.path.isdir(dir_path):
-        abort(500, f"Verzeichnis {dir} nicht gefunden")
+    folder = unquote(request.args.get("path", ""))
+    folder_path = os.path.join(MEDIA_DIR, folder.lstrip('/'))
+    if not os.path.isdir(folder_path):
+        abort(500, f"Verzeichnis {folder} nicht gefunden")
     images = []
-    for file in sorted(os.listdir(dir_path)):
-        image_path = os.path.join(dir_path, file)
-        if os.path.isfile(image_path):
-            ext = file.lower()
-            if ext.endswith(IMAGE_EXTENSIONS):
-                url = quote(posixpath.join(dir, file))
+    for file in sorted(os.listdir(folder_path)):
+        file_path = os.path.join(folder_path, file)
+        if os.path.isfile(file_path):
+            if file.endswith(IMAGE_EXTENSIONS):
+                url = quote(posixpath.join(folder, file))
                 images.append((url))
     if len(images) < 1:
         abort(500, "Keine Bilder gefunden")
-    return render_template("slideshow.jinja", title=dir, images=images)
+    return render_template("slideshow.html", title=folder, images=images, folder=folder)
 
 @app.route("/album")
 def album():
-    dir = unquote(request.args.get("path", "/"))
-    dir_path = os.path.join(MEDIA_DIR, dir.lstrip('/'))
-    if not os.path.isdir(dir_path):
-        abort(500, f"Verzeichnis {dir} nicht gefunden")
+    folder = unquote(request.args.get("path", ""))
+    folder_path = os.path.join(MEDIA_DIR, folder.lstrip('/'))
+    if not os.path.isdir(folder_path):
+        abort(500, f"Verzeichnis {folder} nicht gefunden")
     audios = []
     cover = None
-    for file in sorted(os.listdir(dir_path)):
+    for file in sorted(os.listdir(folder_path)):
         if file.startswith(".cover."):
-            cover = quote(os.path.join(dir, file))
+            cover = quote(os.path.join(folder, file))
             continue
         title, ext = os.path.splitext(file)
-        file_path = os.path.join(dir_path, file)
+        file_path = os.path.join(folder_path, file)
         if os.path.isfile(file_path):
             if ext.endswith(AUDIO_EXTENSIONS):
-                url = quote(posixpath.join(dir, file))
+                url = quote(posixpath.join(folder, file))
                 audios.append((title, file, url))
     if len(audios) < 1:
         abort(500, "Keine Audios gefunden")
-    
-    return render_template("album.jinja", title=dir, audios=audios, cover=cover)
+    return render_template("album.html", title=folder, audios=audios, cover=cover, folder=folder)
 
 @app.route("/image")
 def image():
     path = unquote(request.args.get("path", ""))
     folder = os.path.dirname(path)
-    file_path = os.path.join(MEDIA_DIR, path.lstrip('/'))
     title = os.path.basename(path)
     mime_type, _ = mimetypes.guess_type(path)
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('image/'):
-        return render_template("image.jinja", title=title, source=quote(path), folder=folder, file=title)
+        return render_template("image.html", title=title, source=quote(path), folder=folder, file=title)
     else:
         abort(500, f"Mime {mime_type} ist keine Bild-Datei")
 
@@ -135,16 +128,16 @@ def video():
     mime_type, _ = mimetypes.guess_type(path)
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('video/'):
-        return render_template("video.jinja", title=title, source=quote(path), folder=folder, file=title)
+        return render_template("video.html", title=title, source=quote(path), folder=folder, file=title)
     elif mime_type == "application/vnd.apple.mpegurl":
-        return render_template("videoHls.jinja", title=title, source=path, folder=folder, file=title)
+        return render_template("videoHls.html", title=title, source=path, folder=folder, file=title)
     else:
         parsedHref = urlparse(path)
         if parsedHref.netloc.endswith("youtube.com"):
             params = parse_qs(parsedHref.query)
             video = params.get('v', [None])
             if (video):
-                return render_template("videoYoutube.jinja", title=title, video=video[0], folder=folder, file=title)
+                return render_template("videoYoutube.html", title=title, video=video[0], folder=folder, file=title)
         abort(500, f"Ungültiges Video = {path}")
 
 @app.route("/audio")
@@ -162,8 +155,8 @@ def audio():
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('audio/'):
         if path.startswith("http://") or path.startswith("https://"):
-            return render_template("audio.jinja", title=title, source=path, folder=folder, file=title)
-        return render_template("audio.jinja", title=title, source=quote(path), folder=folder, file=title)
+            return render_template("audio.html", title=title, source=path, folder=folder, file=title)
+        return render_template("audio.html", title=title, source=quote(path), folder=folder, file=title)
     else:
         abort(500, f"Mime {mime_type} ist keine Audio-Datei")
 
