@@ -24,6 +24,7 @@
       <span id="runtime">00:00</span> von <span id="duration">--:--</span> min
       <button id="forward" onclick="youtubeForward()">Vorspulen</button>
       <button id="full" onclick="setFullScreen()">Vollbild</button>
+      <span id="quality"></span>
     </p>
   </header>
   <main>
@@ -82,6 +83,9 @@
       }
       document.getElementById('runtime').textContent = formatTime(currentTime);
       document.getElementById('duration').textContent = formatTime(duration);
+      const quality = youtubePlayer.getPlaybackQuality();
+      if (quality === 'unknown') document.getElementById('quality').textContent = "";
+      else document.getElementById('quality').textContent = quality;
     }
 
     function youtubeTogglePlay() {

@@ -19,6 +19,9 @@
     });
     _player.addEventListener('timeupdate', () => {
       document.getElementById('runtime').textContent = formatTime(_player.currentTime);
+      if (_player instanceof HTMLVideoElement) {
+        document.getElementById('quality').textContent = _player.videoHeight + 'p';
+      }
     });
     return _player;
   }
@@ -63,14 +66,18 @@
   function exit() {
     const url = new URL('/folder', window.location.origin);
     url.searchParams.set('path', '{{folder}}');
-    url.searchParams.set('focus', '{{file}}');
+    const focus = decodeURIComponent('{{file}}');
+    url.searchParams.set('focus', focus);
     window.location.href = url.toString().replace(/%2F/g, '/').replace(/\+/g, '%20');
   }
 
   function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    if (Number.isFinite(mins) && Number.isFinite(secs)) {
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+    return "---:---";
   }
 
   function adjustHeight() {

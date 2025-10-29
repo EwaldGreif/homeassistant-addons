@@ -43,6 +43,7 @@ def folder():
             elif file.endswith(IMAGE_EXTENSIONS):
                 medium = "image"
                 imageCount += 1
+                continue;
             elif file.endswith(VIDEO_EXTENSIONS):
                 medium = "video"
             elif file.endswith(AUDIO_EXTENSIONS):
@@ -110,7 +111,7 @@ def image():
     mime_type, _ = mimetypes.guess_type(path)
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('image/'):
-        return render_template("image.html", title=title, source=quote(path), folder=folder, file=title)
+        return render_template("image.html", title=title, source=quote(path), folder=folder, file=quote(title))
     else:
         abort(500, f"Mime {mime_type} ist keine Bild-Datei")
 
@@ -128,16 +129,16 @@ def video():
     mime_type, _ = mimetypes.guess_type(path)
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('video/'):
-        return render_template("video.html", title=title, source=quote(path), folder=folder, file=title)
+        return render_template("video.html", title=title, source=quote(path), folder=folder, file=quote(title))
     elif mime_type == "application/vnd.apple.mpegurl":
-        return render_template("videoHls.html", title=title, source=path, folder=folder, file=title)
+        return render_template("videoHls.html", title=title, source=path, folder=folder, file=quote(title))
     else:
         parsedHref = urlparse(path)
         if parsedHref.netloc.endswith("youtube.com"):
             params = parse_qs(parsedHref.query)
             video = params.get('v', [None])
             if (video):
-                return render_template("videoYoutube.html", title=title, video=video[0], folder=folder, file=title)
+                return render_template("videoYoutube.html", title=title, video=video[0], folder=folder, file=quote(title))
         abort(500, f"Ungültiges Video = {path}")
 
 @app.route("/audio")
@@ -155,8 +156,8 @@ def audio():
     mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('audio/'):
         if path.startswith("http://") or path.startswith("https://"):
-            return render_template("audio.html", title=title, source=path, folder=folder, file=title)
-        return render_template("audio.html", title=title, source=quote(path), folder=folder, file=title)
+            return render_template("audio.html", title=title, source=path, folder=folder, file=quote(title))
+        return render_template("audio.html", title=title, source=quote(path), folder=folder, file=quote(title))
     else:
         abort(500, f"Mime {mime_type} ist keine Audio-Datei")
 
