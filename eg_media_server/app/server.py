@@ -2,14 +2,15 @@ import os, mimetypes, yaml, posixpath
 from flask import Flask, request, abort, render_template, send_file
 from urllib.parse import quote, unquote, urlparse, parse_qs
 
+MEDIA_DIR = "/media"
+
+def set_media_dir(path):
+    global MEDIA_DIR
+    MEDIA_DIR = path
+
 app = Flask(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
-
-DEFAULT_MEDIA_DIR = "/media"
-
-if 'MEDIA_DIR' not in globals():
-    MEDIA_DIR = DEFAULT_MEDIA_DIR
 
 IMAGE_EXTENSIONS = ('.jpeg', '.jpg', '.png')
 VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi')
@@ -49,6 +50,7 @@ def folder():
             elif file.endswith(AUDIO_EXTENSIONS):
                 medium = "audio"
                 audioCount += 1
+                continue
             else:
                 medium = "file"
         entries.append((file, medium, url))
@@ -126,8 +128,10 @@ def video():
             data = yaml.safe_load(f)
         title = data['title']
         path = data['src']
-    mime_type, _ = mimetypes.guess_type(path)
-    mime_type = mime_type or 'application/octet-stream'
+        mime_type = data.get('mime', None)
+    if mime_type is None:
+        mime_type, _ = mimetypes.guess_type(path)
+        mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('video/'):
         return render_template("video.html", title=title, source=quote(path), folder=folder, file=quote(title))
     elif mime_type == "application/vnd.apple.mpegurl":
@@ -152,8 +156,10 @@ def audio():
             data = yaml.safe_load(f)
         title = data['title']
         path = data['src']
-    mime_type, _ = mimetypes.guess_type(path)
-    mime_type = mime_type or 'application/octet-stream'
+        mime_type = data.get('mime', None)
+    if mime_type is None:
+        mime_type, _ = mimetypes.guess_type(path)
+        mime_type = mime_type or 'application/octet-stream'
     if mime_type.startswith('audio/'):
         if path.startswith("http://") or path.startswith("https://"):
             return render_template("audio.html", title=title, source=path, folder=folder, file=quote(title))
