@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Radio {{title}}</title>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { font-family: sans-serif; }
+    header { text-align: center; }
+	  main { display: flex; justify-content: center; align-items: flex-start; gap: 20px; }
+    h1 { font-size: 1em; margin: 0; }
+    p { margin: 2px; }
+    span { font-weight: bold; }
+    ul { list-style-type: none; margin: 10px 0 0 0; padding: 0; text-align: right; }
+    img { margin-top: 10px;  max-width: 250px; max-height: 250px; width: auto; height: auto; }
+    button:focus { background-color: #00ffff; }
+    .left-column { flex-shrink: 0; max-width: 45%; width: 40%; display: flex; justify-content: flex-end; }
+    .right-column { flex-shrink: 0; max-width: 45%; width: 40%; text-align: left; }
+    #darkOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: none; z-index: 9999; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{title}}</h1>
+    <p>
+      <button id="exit" onclick="exit()">Zurück zum Verzeichnis</button>
+      <button id="previous" onclick="prevRadio()">Vorheriger Sender</button>
+      <button id="next" onclick="nextRadio()">Nächster Sender</button>
+      <button id="play" onclick="togglePlay()">Abspielen</button>
+      <button id="full" onclick="setFullScreen()">Dunkelbild</button>
+    </p>
+  </header>
+  <main>
+    <div class="left-column">
+      <ul>
+        {% for name, src, icon, rpid in stations %}
+          <li>{{name}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="right-column">
+      <audio id="audio"></audio>
+      <img id="icon">
+      <div id="program"></div>
+      <div id="artist"></div>
+      <div id="song"></div>
+    <div>
+  </main>
+  <div id="darkOverlay"></div>
+
+  {% include "scripts.html" %}
+
+  <script>
+    init();
+    let player = initPlayer('audio');
+    let meta_timer;
+    initDarkKeyDown(darkKeyDown);
+    addNavigation('exit');
+    addNavigation('previous');
+    addNavigation('next');
+    addNavigation('play');
+    addNavigation('full');
+    focus('play');
+
+    const stations = JSON.parse('{{stations|tojson|safe}}');
+    let current = 0;
+    if (stations.length > 0) {
+      showRadio(0);
+    }
+
+    function showRadio(index) {
+      stop_meta_update();
+      current = (index + stations.length) % stations.length;
+      const listItems = document.querySelectorAll('li');
+      listItems.forEach((li, index) => {
+        if (index === current) {
+          li.style.fontWeight = 'bold';
+        } else {
+          li.style.fontWeight = 'normal';
+        }
+      });
+      document.getElementById('audio').src = stations[current][1];
+      document.getElementById('icon').src = stations[current][2];
+      meta_update();
+    }
+
+    function nextRadio() {
+      showRadio(current + 1);
+      focus('next');
+      if (document.getElementById('play').innerText === 'Anhalten') {
+        audio.play();
+      }
+    }
+
+    function prevRadio() {
+      showRadio(current - 1);
+      focus('previous');
+      if (document.getElementById('play').innerText === 'Anhalten') {
+        audio.play();
+      }
+    }
+
+    function darkKeyDown(event) {
+      if (event.key === 'ArrowRight') {
+        nextRadio();
+      } else if (event.key === 'ArrowLeft') {
+        prevRadio();
+      }
+    }
+
+    function stop_meta_update() {
+      clearTimeout(meta_timer)
+      const program = document.getElementById("program");
+      if (program) program.textContent = "";
+      const artist = document.getElementById("artist");
+      if (artist) artist.textContent = "";
+      const song = document.getElementById("song");
+      if (song) song.textContent = "";
+    }
+
+    async function meta_update() {
+      let meta_program = "";
+      let meta_artist = "";
+      let meta_song = "";
+      let poll_next = 10000;
+      try {
+        rpid = stations[current][3]
+        if (!rpid) {
+          throw new Error("No station id");
+        }
+        const response = await fetch("https://core-search.radioplayer.cloud/276/qp/v4/events/?rpId=" + rpid);
+        if (!response.ok) {
+            throw new Error("HTTP-Fehler: " + response.status);
+        }
+        const data = await response.json();
+        meta_program = data["results"]["now"]["serviceDescription"];
+        if (data["results"]["now"]["song"]) {
+          meta_artist = data["results"]["now"]["artistName"];
+          meta_song = data["results"]["now"]["name"];
+        }
+        pollNext = data["pollNext"];
+      } finally {
+      }
+      const program = document.getElementById("program");
+      if (program) program.textContent = meta_program;
+      const artist = document.getElementById("artist");
+      if (artist) artist.textContent = meta_artist;
+      const song = document.getElementById("song");
+      if (song) song.textContent = meta_song;
+      meta_timer = setTimeout(meta_update, poll_next);
+    }
+  </script>
+
+</body>
+</html>

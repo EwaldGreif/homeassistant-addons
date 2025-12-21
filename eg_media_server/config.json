@@ -1,6 +1,6 @@
 {
   "name": "EG Media Server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "slug": "eg_media_server",
   "description": "Ein minimaler Flask basierter Medien-Server aus /media",
   "arch": ["amd64", "armv7", "armhf", "aarch64"],

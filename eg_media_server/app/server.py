@@ -1,27 +1,33 @@
 import os, mimetypes, yaml, posixpath
-from flask import Flask, request, abort, render_template, send_file
+from flask import Flask, Blueprint, request, abort, render_template, send_file
 from urllib.parse import quote, unquote, urlparse, parse_qs
 
+flask = None
+
 MEDIA_DIR = "/media"
+IMAGE_EXTENSIONS = (".jpeg", ".jpg", ".png")
+VIDEO_EXTENSIONS = (".mp4", ".mov", ".avi")
+AUDIO_EXTENSIONS = (".mp3")
+PLAYLIST_EXTENSIONS = (".playlist")
 
-def set_media_dir(path):
-    global MEDIA_DIR
-    MEDIA_DIR = path
+def init(*, port: int, path: str|None = None):
+    global MEDIA_DIR, flask
+    if path is not None:
+        MEDIA_DIR = path
+    flask = Flask(__name__)
+    flask.jinja_env.trim_blocks = True
+    flask.jinja_env.lstrip_blocks = True
+    flask.register_blueprint(bp)
+    flask.run(host = "0.0.0.0", port = port)
 
-app = Flask(__name__)
-app.jinja_env.trim_blocks = True
-app.jinja_env.lstrip_blocks = True
+bp = Blueprint("main", __name__)
 
-IMAGE_EXTENSIONS = ('.jpeg', '.jpg', '.png')
-VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi')
-AUDIO_EXTENSIONS = ('.mp3', '.ogg', '.flac')
-
-@app.route("/")
-@app.route("/folder")
+@bp.route("/")
+@bp.route("/folder")
 def folder():
     dir = unquote(request.args.get("path", "/"))
     focus = unquote(request.args.get("focus", ""))
-    dir_path = os.path.join(MEDIA_DIR, dir.lstrip('/'))
+    dir_path = os.path.join(MEDIA_DIR, dir.lstrip("/"))
     if not os.path.isdir(dir_path):
         abort(500, f"Verzeichnis {dir} existiert nicht")
     entries = []
@@ -30,7 +36,7 @@ def folder():
     for file in sorted(os.listdir(dir_path)):
         if file.startswith('.'):
             continue
-        file_path = os.path.join(dir_path, file.lstrip('/'))
+        file_path = os.path.join(dir_path, file.lstrip("/"))
         url = quote(posixpath.join(dir, file))
         medium = "file"
         if os.path.isdir(file_path):
@@ -57,19 +63,19 @@ def folder():
     path = quote(dir)
     return render_template("folder.html", title=dir, path=path, entries=entries, imageCount=imageCount, audioCount=audioCount, focus=focus)
 
-@app.route("/file")
+@bp.route("/file")
 def file():
     file = unquote(request.args.get("path", ""))
-    file_path = os.path.join(MEDIA_DIR, file.lstrip('/'))
+    file_path = os.path.join(MEDIA_DIR, file.lstrip("/"))
     if (not os.path.isfile(file_path)):
         abort(500, f"Datei {file} existiert nicht")
     mime_type, _ = mimetypes.guess_type(file_path)
     return send_file(file_path, mimetype=mime_type)
 
-@app.route("/slideshow")
+@bp.route("/slideshow")
 def slideshow():
     folder = unquote(request.args.get("path", ""))
-    folder_path = os.path.join(MEDIA_DIR, folder.lstrip('/'))
+    folder_path = os.path.join(MEDIA_DIR, folder.lstrip("/"))
     if not os.path.isdir(folder_path):
         abort(500, f"Verzeichnis {folder} nicht gefunden")
     images = []
@@ -83,10 +89,10 @@ def slideshow():
         abort(500, "Keine Bilder gefunden")
     return render_template("slideshow.html", title=folder, images=images, folder=folder)
 
-@app.route("/album")
+@bp.route("/album")
 def album():
     folder = unquote(request.args.get("path", ""))
-    folder_path = os.path.join(MEDIA_DIR, folder.lstrip('/'))
+    folder_path = os.path.join(MEDIA_DIR, folder.lstrip("/"))
     if not os.path.isdir(folder_path):
         abort(500, f"Verzeichnis {folder} nicht gefunden")
     audios = []
@@ -105,24 +111,44 @@ def album():
         abort(500, "Keine Audios gefunden")
     return render_template("album.html", title=folder, audios=audios, cover=cover, folder=folder)
 
-@app.route("/image")
+@bp.route("/radio")
+def radio():
+    path = unquote(request.args.get("path", ""))
+    folder = os.path.dirname(path)
+    file_path = os.path.join(MEDIA_DIR, path.lstrip("/"))
+    title = os.path.basename(path)
+    if path.endswith(".yaml"):
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        title = data["title"]
+    stations = []
+    for sd in data["stations"]:
+        name = sd.get("name", "")
+        src = sd.get("src", "")
+        icon = sd.get("icon", "")
+        rpid = sd.get("rpid", "")
+        stations.append((name, src, icon, rpid))
+    return render_template("radio.html", title=title, stations=stations, folder=folder, file=quote(title))
+
+@bp.route("/image")
 def image():
     path = unquote(request.args.get("path", ""))
     folder = os.path.dirname(path)
     title = os.path.basename(path)
     mime_type, _ = mimetypes.guess_type(path)
     mime_type = mime_type or 'application/octet-stream'
-    if mime_type.startswith('image/'):
+    if mime_type.startswith("image/"):
         return render_template("image.html", title=title, source=quote(path), folder=folder, file=quote(title))
     else:
         abort(500, f"Mime {mime_type} ist keine Bild-Datei")
 
-@app.route("/video")
+@bp.route("/video")
 def video():
     path = unquote(request.args.get("path", ""))
     folder = os.path.dirname(path)
     file_path = os.path.join(MEDIA_DIR, path.lstrip('/'))
     title = os.path.basename(path)
+    mime_type = None
     if path.endswith(".yaml"):
         with open(file_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -145,12 +171,13 @@ def video():
                 return render_template("videoYoutube.html", title=title, video=video[0], folder=folder, file=quote(title))
         abort(500, f"Ungültiges Video = {path}")
 
-@app.route("/audio")
+@bp.route("/audio")
 def audio():
     path = unquote(request.args.get("path", ""))
     folder = os.path.dirname(path)
     file_path = os.path.join(MEDIA_DIR, path.lstrip('/'))
     title = os.path.basename(path)
+    mime_type = None
     if path.endswith(".yaml"):
         with open(file_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -168,4 +195,4 @@ def audio():
         abort(500, f"Mime {mime_type} ist keine Audio-Datei")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8090)
+    init(port = 8090, path = "/media")

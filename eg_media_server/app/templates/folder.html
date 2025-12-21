@@ -44,11 +44,13 @@
         <li><a href="/video?path={{url}}">{{name}}</a></li>
       {% elif medium == "audio" or medium == "audiostream" %}
         <li><a href="/audio?path={{url}}">{{name}}</a></li>
+      {% elif medium == "radio" %}
+        <li><a href="/radio?path={{url}}">{{name}}</a></li>
       {% endif %}
     {% endfor %}
   </ul>
 
-  {% include "lib/functions.html" %}
+  {% include "scripts.html" %}
 
   <script>
     const imageCount = "{{imageCount}}";

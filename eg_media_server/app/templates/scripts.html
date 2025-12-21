@@ -15,12 +15,15 @@
   function initPlayer(player) {
     _player = document.getElementById(player);
     _player.addEventListener('loadedmetadata', () => {
-      document.getElementById('duration').textContent = formatTime(_player.duration);
+      const duration = document.getElementById('duration');
+      if (duration) duration.textContent = formatTime(_player.duration);
     });
     _player.addEventListener('timeupdate', () => {
-      document.getElementById('runtime').textContent = formatTime(_player.currentTime);
+      const runtime = document.getElementById('runtime');
+      if (runtime) runtime.textContent = formatTime(_player.currentTime);
       if (_player instanceof HTMLVideoElement) {
-        document.getElementById('quality').textContent = _player.videoHeight + 'p';
+        const quality = document.getElementById('quality');
+        if (quality) quality.textContent = _player.videoHeight + 'p';
       }
     });
     return _player;
@@ -35,7 +38,7 @@
   }
 
   function focus(object) {
-    let obj = document.getElementById(object);
+    const obj = document.getElementById(object);
     if (obj) obj.focus();
   }
 

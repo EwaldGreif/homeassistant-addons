@@ -14,8 +14,8 @@
     ul { list-style-type: none; margin: 10px 0 0 0; padding: 0; }
     img { margin-top: 10px; height: 250px; width: auto; }
     button:focus { background-color: #00ffff; }
-    .left-column { flex-shrink: 0; max-width: 45%; display: flex; justify-content: flex-end; }
-    .right-column { flex-shrink: 0; max-width: 45%; text-align: left; }
+    .left-column { flex-shrink: 0; max-width: 45%; width: 40%; display: flex; justify-content: flex-end; }
+    .right-column { flex-shrink: 0; max-width: 45%; width: 40%; text-align: left; }
     #darkOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; display: none; z-index: 9999; }
   </style>
 </head>
@@ -47,7 +47,7 @@
   </main>
   <div id="darkOverlay"></div>
 
-  {% include "lib/functions.html" %}
+  {% include "scripts.html" %}
 
   <script>
     init();
