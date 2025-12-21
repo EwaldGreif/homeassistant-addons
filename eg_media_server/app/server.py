@@ -14,7 +14,8 @@ def init(*, port: int, path: str|None = None):
     global MEDIA_DIR, flask
     if path is not None:
         MEDIA_DIR = path
-    flask = Flask(__name__)
+    template_folder = os.path.join(MEDIA_DIR, ".templates")
+    flask = Flask(__name__, template_folder = template_folder)
     flask.jinja_env.trim_blocks = True
     flask.jinja_env.lstrip_blocks = True
     flask.register_blueprint(bp)
